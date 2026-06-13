@@ -30,6 +30,12 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="calculate">
+        <NativeTabs.Trigger.Label>Laske</NativeTabs.Trigger.Label>
+        <AntDesign name="calculator" size={24} color="black" />
+      </NativeTabs.Trigger>
+
+
       <NativeTabs.Trigger name="lasitteet">
         <NativeTabs.Trigger.Label>Lasitteet</NativeTabs.Trigger.Label>
         <AntDesign name="experiment" size={24} color="black" />  

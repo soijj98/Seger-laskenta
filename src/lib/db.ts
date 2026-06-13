@@ -16,8 +16,8 @@ export const initDB = async () => {
         `);
 
     await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS ingredient (
-            id INTEGERT PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE IF NOT EXISTS ingredients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             price REAL,
             g_mol REAL NOT NULL,
