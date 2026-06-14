@@ -41,10 +41,12 @@ export const initDB = async () => {
     `);
 };
 
+
 export const seedIngredients = async () => {
     const result = await db.getFirstAsync<{ count: number }>(
         'SELECT COUNT(*) as count FROM ingredients'
     );
+    console.log(result?.count)
 
     if (result && result.count === 0) {
         console.log('Seeding ingredients...');
@@ -112,7 +114,7 @@ export const deleteGlazes = async (id: number) => {
 };
 
 export const archiveGlazes = async (id: number) => {
-    await db.runAsync('UPDATE glazes SET archived = 1 WHERE id = 1', [id]);
+    await db.runAsync('UPDATE glazes SET archived = 1 WHERE id = ?', [id]);
 };
 
 export const deleteMultipleGlazes = async (ids: number[]) => {

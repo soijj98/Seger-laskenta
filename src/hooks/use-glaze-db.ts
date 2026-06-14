@@ -28,7 +28,7 @@ export function useGlazeDb() {
 
     const getRawMaterials = async (): Promise<{ data: RawMaterial[] | null; error: Error | null }> => {
         try {  
-            const result = await db.getAllAsync('SELECT * FROM ingredients BY name ASC');
+            const result = await db.getAllAsync('SELECT * FROM ingredients ORDER BY name ASC');
         
             return { data: result as RawMaterial[], error: null };
         } catch (error) {
