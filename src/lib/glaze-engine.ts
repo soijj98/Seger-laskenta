@@ -17,7 +17,7 @@ export interface RecipeRow {
 
 // 1. normaalisuunta: Resepti -> Seger
 
-export function calcSeger(rows: RecipeRow[], rawMaterialMap: Record<number, RawMaterial>) {
+export function calculateSeger(rows: RecipeRow[], rawMaterialMap: Record<number, RawMaterial>) {
     const moles: Record<string, number> = {};
     ALL_OXIDES.forEach(oxide => moles[oxide] = 0);
 
@@ -109,7 +109,7 @@ export function calcRecipe(
     }))
     .filter((r) => r.amount_perc > 0.01);
 
-    const calculated = calcSeger(rows, rawMaterialMap);
+    const calculated = calculateSeger(rows, rawMaterialMap);
     const resError = calculated.seger ? calcResError(wSeger, calculated.seger) : null;
 
     return {
