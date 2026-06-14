@@ -99,7 +99,7 @@ export const seedIngredients = async () => {
             await statement.finalizeAsync();
         }
     } else {
-        console.log(`In database alreade has ${result?.count} ingredients. Skipping seed.`);
+        console.log(`In database already has ${result?.count} ingredients. Skipping seeds.`);
     }
 };
 

@@ -45,9 +45,6 @@ export default function GlazesScreen() {
     const loadData = async () => {
 
         try {
-            await initDB();
-            await seedIngredients();
-        
             const data = await getGlazes() as Glazes[];
             setGlazes(data);
         } catch (error) {

@@ -4,41 +4,16 @@ import { useGlazeDb, RawMaterial } from '../hooks/use-glaze-db';
 import { calculateSeger, calcRecipe, ALL_OXIDES, RO_R2O, R2O3, RO2, RecipeRow, SegerFormula, buildRawMaterialMap } from '../lib/glaze-engine';
 
 
+import SegerGrid from '../components/seger-table';
+
+
 type Mode = 'forward' | 'reverse';
 
 // apufunktio
 // näytetään sekä normaali- että käänteissuunan tuloksessa
 
-function SegerGrid({ seger }: { seger: Record<string, number> }) {
-  // ryhmitellään oksidit Seger-kaavan perinteiseen järjestykseen
-    const groups = [
-    { label: 'RO / R₂O  (sulattajat, summa = 1)', oxides: [...RO_R2O] },
-    { label: 'R₂O₃  (stabilisaattorit)', oxides: [...R2O3] },
-    { label: 'RO₂  (lasiglaasit)', oxides: [...RO2] },
-  ];
+// segerGrid siirretty
 
-  return (
-    <View>
-      {groups.map(group => (
-        <View key={group.label} style={styles.segerGroup}>
-          <Text style={styles.segerGroupLabel}>{group.label}</Text>
-          <View style={styles.grid}>
-            {group.oxides.map(oxide => {
-              const val = seger[oxide];
-              if (!val || val < 0.0001) return null;
-              return (
-                <View key={oxide} style={styles.gridItem}>
-                  <Text style={styles.oxideName}>{oxide.toUpperCase()}</Text>
-                  <Text style={styles.oxideValue}>{val.toFixed(3)}</Text>
-                </View>
-              );
-            })}
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-}
 
 
 export default function CalculationScreen() {
@@ -423,7 +398,7 @@ export default function CalculationScreen() {
 
 
 const styles = StyleSheet.create({
-   container: { flex: 1, padding: 15, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 15, backgroundColor: '#fff' },
 
   // Tila-valintanapit ylhäällä
   modeRow: { flexDirection: 'row', marginTop: 30, marginBottom: 15, borderRadius: 8, overflow: 'hidden', borderWidth: 1, borderColor: '#2a7' },

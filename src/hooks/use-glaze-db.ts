@@ -1,4 +1,6 @@
 import * as SQLite from 'expo-sqlite';
+import { initDB, seedIngredients } from '../lib/db';
+
 
 export interface RawMaterial {
     id: number;
@@ -28,6 +30,10 @@ export function useGlazeDb() {
 
     const getRawMaterials = async (): Promise<{ data: RawMaterial[] | null; error: Error | null }> => {
         try {  
+            await initDB();
+            await seedIngredients();
+        
+
             const result = await db.getAllAsync('SELECT * FROM ingredients ORDER BY name ASC');
         
             return { data: result as RawMaterial[], error: null };
