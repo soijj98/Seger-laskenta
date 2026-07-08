@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Saija Joronen
+// Licensed under the MIT License.
+
 import { Matrix, pseudoInverse } from 'ml-matrix';
 import { RawMaterial } from '@/hooks/use-glaze-db';
 
