@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Saija Joronen
+// Licensed under the MIT License.
+
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RO_R2O, R2O3, RO2 } from '../lib/glaze-engine';
