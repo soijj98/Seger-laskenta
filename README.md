@@ -1,56 +1,64 @@
-# Welcome to your Expo app 👋
+# Glaze Lab 🏺
+**Status** Work in progress - core features are functional, development continues
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## What is this?
+This dedicated tool for ceramic glaze recipe management originated from my personal hobby in ceramics. Its evolution, particularly the complex matrix calculations at its core, was made possible through a close and valuable collaboration with Päivi Vikberg.
 
-## Get started
+The app implements Seger formula calculations in both directions:
+* **Recipe → Seger:** input raw material amounts, get a normalized Seger formula.
+* **Seger → Recipe:** input the desired Seger formula, get optimized raw material amounts.
 
-1. Install dependencies
+The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares) optimization to ensure physically viable results (no negative raw material amounts).
 
-   ```bash
-   npm install
-   ```
+## Technologies
 
-2. Start the app
+* **Framework:** React Native + Expo (Expo Router)
+* **Database:** expo-sqlite (local)
+* **Matrix Calculation:** ml-matrix (pseudoinverse, NNLS)
+* **Language:** TypeScript
+* **Future Backend:** Supabase (PostgreSQL)
 
-   ```bash
-   npx expo start
-   ```
+## Features
 
-In the output, you'll find options to open the app in a
+### Glaze List
+* Add, delete, and archive glazes
+* Swipe left to delete (swipe-to-delete)
+* Long press → Cancel / Archive / Delete
+* Multi-select and bulk delete
+* Sort by name or temperature
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Calculator
+* Recipe → Seger formula in real-time
+* Seger → Recipe via matrix calculation
+* A library of 79 raw materials directly in the database
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Architecture
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+src/  
+  app/            ← views (Expo Router)  
+  components/     ← shared UI components    
+  hooks/          ← database operations (repository layer)  
+  lib/    
+    glaze-engine  ← calculation engine, no UI dependencies    
+    db.ts         ← SQLite connection and migrations
 ```
+The calculation engine (glaze-engine.ts) is completely decoupled from the UI — switching the backend to Supabase will only require changes in the hooks/ layer.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+```Bash
+npm install
+npx expo start
+```
+The database is initialized and raw materials are seeded automatically on the first launch.
 
-### Other setup steps
+## Roadmap 
+[ ] Supabase backend (cloud sync)
+[ ] Save and edit recipes
+[ ] Color oxide management
+[ ] Share glazes between users
+[ ] Document firing schedules
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Background
+I am a ceramics hobbyist and a software development student. This project combines both — I wanted to build a tool I actually use, not just a practice app.
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The mathematical foundation (Seger formula, matrix calculation) originates from Päivi Vikberg's Excel workbook, which I converted into a TypeScript calculation engine.
