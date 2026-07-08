@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Saija Joronen
+// Licensed under the MIT License.
+
 import * as SQLite from 'expo-sqlite';
 
 import ingredientsSeed from './raaka_aineet_seed.json';
