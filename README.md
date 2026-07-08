@@ -52,11 +52,17 @@ npx expo start
 The database is initialized and raw materials are seeded automatically on the first launch.
 
 ## Roadmap 
+
 [ ] Supabase backend (cloud sync)
+
 [ ] Save and edit recipes
+
 [ ] Color oxide management
+
 [ ] Share glazes between users
+
 [ ] Document firing schedules
+
 
 ## Background
 I am a ceramics hobbyist and a software development student. This project combines both — I wanted to build a tool I actually use, not just a practice app.
