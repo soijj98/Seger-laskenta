@@ -1,5 +1,9 @@
 # Glaze Lab 🏺
+> Ceramic Glaze Management and Calculation App — React Native / Expo
+
 **Status** Work in progress - core features are functional, development continues
+
+---
 
 ## What is this?
 This dedicated tool for ceramic glaze recipe management originated from my personal hobby in ceramics. Its evolution, particularly the complex matrix calculations at its core, was made possible through a close and valuable collaboration with Päivi Vikberg.
@@ -10,6 +14,8 @@ The app implements Seger formula calculations in both directions:
 
 The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares) optimization to ensure physically viable results (no negative raw material amounts).
 
+---
+
 ## Technologies
 
 * **Framework:** React Native + Expo (Expo Router)
@@ -17,6 +23,8 @@ The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares)
 * **Matrix Calculation:** ml-matrix (pseudoinverse, NNLS)
 * **Language:** TypeScript
 * **Future Backend:** Supabase (PostgreSQL)
+
+---
 
 ## Features
 
@@ -31,6 +39,8 @@ The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares)
 * Recipe → Seger formula in real-time
 * Seger → Recipe via matrix calculation
 * A library of 79 raw materials directly in the database
+ 
+---
 
 ## Architecture
 
@@ -45,24 +55,25 @@ src/
 ```
 The calculation engine (glaze-engine.ts) is completely decoupled from the UI — switching the backend to Supabase will only require changes in the hooks/ layer.
 
+---
+**Getting started**
 ```Bash
 npm install
 npx expo start
 ```
 The database is initialized and raw materials are seeded automatically on the first launch.
 
-## Roadmap 
+---
 
-[ ] Supabase backend (cloud sync)
+## Kehityssuunnitelma
 
-[ ] Save and edit recipes
+- [ ] Supabase backend (cloud sync)
+- [ ] Save and edit recipes
+- [ ] Color oxide management
+- [ ] Share glazes between users
+- [ ] Document firing schedules
 
-[ ] Color oxide management
-
-[ ] Share glazes between users
-
-[ ] Document firing schedules
-
+---
 
 ## Background
 I am a ceramics hobbyist and a software development student. This project combines both — I wanted to build a tool I actually use, not just a practice app.
