@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Saija Joronen
+// Licensed under the MIT License.
+
 import { Tabs } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
