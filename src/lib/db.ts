@@ -5,7 +5,7 @@ import * as SQLite from "expo-sqlite";
 
 import ingredientsSeed from "./raaka_aineet_seed.json";
 
-const db = await SQLite.openDatabaseSync("glazes.db");
+const db = await SQLite.openDatabaseAsync("glazes.db");
 
 export const initDB = async () => {
   await db.execAsync(`
