@@ -7,7 +7,10 @@ const translations = {
   en: {
     welcome: "Welcome",
     calculate: "Calculate",
+    glaze: "Glaze",
     glazes: "Glazes",
+    error: "Error!",
+    dbErr: "Database error:",
     rawMaterials: "Raw Materials",
     addMat: "Recipe is empty. Add raw materials.",
     amount: "Amount %",
@@ -41,12 +44,48 @@ const translations = {
     calcErr: "Calculation failed",
     RecToSeg: "Recipe -> Seger",
     SegToRec: "Seger -> Recipe",
+
+    seeding: "Seeding ingredients...",
+    seedingSucces: "Ingredients seeded successfully.",
+    seedingError: "Error seeding ingredients:",
+    alreadyInDb: "In database already has",
+    skippingSeeds: "ingredients. Skipping seeds.",
+
+    glazeName: "Glaze name",
+    glazeDate: "Date",
+    glazeTemp: "Firing temperature (°C)",
+    saveGlaze: "Save glaze",
+
+    glazeSaved: "Glaze saved!",
+    glazeSaveError: "Error saving glaze.",
+    glazeArchived: "Glaze archived.",
+    glazeDeleted: "Glaze deleted.",
+    glazeDeleteError: "Error deleting glaze.",
+    glazeArchiveError: "Error archiving glaze.",
+    glazeNamePlaceholder: "Enter glaze name",
+    glazeDatePlaceholder: "Select date",
+    glazeTempPlaceholder: "Enter temperature",
+    manageGlazes: "Manage glazes.",
+    doYouWantremoveGlaze: "Do you want to remove the glaze?",
+    removeSelected: "Remove selected",
+    archive: "Archive",
+    unarchive: "Unarchive",
+    edit: "Edit",
+    glazeDetails: "Glaze details",
+    noGlazes: "No glazes.",
+    archiveGlazes: "Archive",
+    deleteGlazes: "Delete",
+
+    segerGroupSmelterSum: "RO / R₂O (fluxes, sum = 1)",
   },
 
   fi: {
     welcome: "Tervetuloa",
     calculate: "Laske",
+    glaze: "Lasite",
     glazes: "Lasitteet",
+    error: "Virhe",
+    dbErr: "Tietokanta virhe:",
     rawMaterials: "Raaka-aineet",
     addMat: "Resepti on tyhjä. Lisää raaka-aineita.",
     amount: "Määrä %",
@@ -81,8 +120,46 @@ const translations = {
     calcErr: "Laskenta epäonnistui",
     RecToSeg: "Resepti -> Seger",
     SegToRec: "Seger -> Resepti",
+
+    seeding: "Esitäytetään raaka-aineita...",
+    seedingSucces: "Raaka-aineet esitetty onnistuneesti.",
+    seedingError: "Virhe raaka-aineiden esitäytössä:",
+    alreadyInDb: "Tietokannassa on jo",
+    skippingSeeds: "raaka-ainetta. Ohitetaan esitäyttö.",
+
+    glazeName: "Lasitteen nimi",
+    glazeDate: "Päivämäärä",
+    glazeTemp: "Polttolämpötila (°C)",
+    saveGlaze: "Tallenna lasite",
+
+    glazeSaved: "Lasite tallennettu!",
+    glazeSaveError: "Virhe lasitteen tallennuksessa.",
+    glazeArchived: "Lasite arkistoitu.",
+    glazeDeleted: "Lasite poistettu.",
+    glazeDeleteError: "Virhe lasitteen poistossa.",
+    glazeArchiveError: "Virhe lasitteen arkistoinnissa.",
+    glazeNamePlaceholder: "Anna lasitteelle nimi",
+    glazeDatePlaceholder: "Valitse päivämäärä",
+    glazeTempPlaceholder: "Anna lämpötila",
+    manageGlazes: "Hallitse lasitteita.",
+    doYouWantremoveGlaze: "Haluatko poistaa lasitteen?",
+    removeSelected: "Poista valitut",
+    archive: "Arkistoi",
+    unarchive: "Poista arkistosta",
+    edit: "Muokkaa",
+    glazeDetails: "Lasitteen tiedot",
+    noGlazes: "Ei lasitteita.",
+    archiveGlazes: "Arkisto",
+    deleteGlazes: "Poista",
+
+    segerGroupSmelterSum: "RO / R₂O  (sulattajat, summa = 1)",
+
+    //name date temperature
+    //nav bar names
   },
 };
+
+// all materials translate to english!!!
 
 const i18n = new I18n(translations);
 

@@ -4,6 +4,7 @@
 import * as SQLite from "expo-sqlite";
 import { Platform } from "react-native";
 
+import i18n from "./i18n/i18n";
 import ingredientsSeed from "./raaka_aineet_seed.json";
 
 let db: SQLite.SQLiteDatabase | null = null;
@@ -62,7 +63,7 @@ export const seedIngredients = async () => {
   console.log(result?.count);
 
   if (result && result.count === 0) {
-    console.log("Seeding ingredients...");
+    console.log(i18n.t("seeding"));
 
     const statement = await db.prepareAsync(`
             INSERT INTO ingredients (
@@ -103,16 +104,16 @@ export const seedIngredients = async () => {
       }
 
       await db.execAsync("COMMIT");
-      console.log("Ingredients seeded successfully.");
+      console.log(i18n.t("seedingSuccess"));
     } catch (error) {
       await db.execAsync("ROLLBACK");
-      console.log("Error seeding ingredients:", error);
+      console.log(i18n.t("seedingError"), error);
     } finally {
       await statement.finalizeAsync();
     }
   } else {
     console.log(
-      `In database already has ${result?.count} ingredients. Skipping seeds.`,
+      `${i18n.t("alreadyInDb")} ${result?.count} ${i18n.t("skippingSeeds")}`,
     );
   }
 };
