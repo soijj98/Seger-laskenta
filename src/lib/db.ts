@@ -2,49 +2,60 @@
 // Licensed under the MIT License.
 
 import * as SQLite from "expo-sqlite";
+import { Platform } from "react-native";
 
 import ingredientsSeed from "./raaka_aineet_seed.json";
 
-const db = await SQLite.openDatabaseAsync("glazes.db");
+let db: SQLite.SQLiteDatabase | null = null;
+
+if (Platform.OS !== "web") {
+  db = SQLite.openDatabaseSync("glazes.db");
+}
+
+//const db = await SQLite.openDatabaseAsync("glazes.db");
 
 export const initDB = async () => {
-  await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS glazes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            date TEXT NOT NULL,
-            temperature INTEGER NOT NULL,
-            archived INTEGER DEFAULT 0
-            );
-        `);
+  if (!db) return;
 
   await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS ingredients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price REAL,
-            g_mol REAL NOT NULL,
-            li2o REAL DEFAULT 0,
-            na2o REAL DEFAULT 0,
-            k2o REAL DEFAULT 0,
-            cao REAL DEFAULT 0,
-            mgo REAL DEFAULT 0,
-            bao REAL DEFAULT 0,
-            sro REAL DEFAULT 0,
-            zno REAL DEFAULT 0,
-            pbo REAL DEFAULT 0,
-            al2o3 REAL DEFAULT 0,
-            fe2o3 REAL DEFAULT 0,
-            b2o3 REAL DEFAULT 0,
-            sio2 REAL DEFAULT 0,
-            p2o5 REAL DEFAULT 0,
-            tio2 REAL DEFAULT 0,
-            mno2 REAL DEFAULT 0
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS glazes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                date TEXT NOT NULL,
+                temperature INTEGER NOT NULL,
+                archived INTEGER DEFAULT 0
+                );
+            `);
+
+  await db.execAsync(`
+            CREATE TABLE IF NOT EXISTS ingredients (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                price REAL,
+                g_mol REAL NOT NULL,
+                li2o REAL DEFAULT 0,
+                na2o REAL DEFAULT 0,
+                k2o REAL DEFAULT 0,
+                cao REAL DEFAULT 0,
+                mgo REAL DEFAULT 0,
+                bao REAL DEFAULT 0,
+                sro REAL DEFAULT 0,
+                zno REAL DEFAULT 0,
+                pbo REAL DEFAULT 0,
+                al2o3 REAL DEFAULT 0,
+                fe2o3 REAL DEFAULT 0,
+                b2o3 REAL DEFAULT 0,
+                sio2 REAL DEFAULT 0,
+                p2o5 REAL DEFAULT 0,
+                tio2 REAL DEFAULT 0,
+                mno2 REAL DEFAULT 0
+            );
+        `);
 };
 
 export const seedIngredients = async () => {
+  if (!db) return;
+
   const result = await db.getFirstAsync<{ count: number }>(
     "SELECT COUNT(*) as count FROM ingredients",
   );
@@ -54,12 +65,12 @@ export const seedIngredients = async () => {
     console.log("Seeding ingredients...");
 
     const statement = await db.prepareAsync(`
-        INSERT INTO ingredients (
-            id, name, price, g_mol, li2o, na2o, k2o, cao, mgo, bao, sro, zno, pbo, al2o3, fe2o3, b2o3, sio2, p2o5, tio2, mno2
-        ) VALUES (
-            $id, $name, $price, $g_mol, $li2o, $na2o, $k2o, $cao, $mgo, $bao, $sro, $zno, $pbo, $al2o3, $fe2o3, $b2o3, $sio2, $p2o5, $tio2, $mno2
-        )
-    `);
+            INSERT INTO ingredients (
+                id, name, price, g_mol, li2o, na2o, k2o, cao, mgo, bao, sro, zno, pbo, al2o3, fe2o3, b2o3, sio2, p2o5, tio2, mno2
+            ) VALUES (
+                $id, $name, $price, $g_mol, $li2o, $na2o, $k2o, $cao, $mgo, $bao, $sro, $zno, $pbo, $al2o3, $fe2o3, $b2o3, $sio2, $p2o5, $tio2, $mno2
+            )
+        `);
 
     try {
       await db.execAsync("BEGIN TRANSACTION");
@@ -107,19 +118,23 @@ export const seedIngredients = async () => {
 };
 
 export const getGlazes = async () => {
+  if (!db) return [];
   const allRows = await db.getAllAsync("SELECT * FROM glazes");
   return allRows;
 };
 
 export const deleteGlazes = async (id: number) => {
+  if (!db) return;
   await db.runAsync("DELETE FROM glazes WHERE id = ?", [id]);
 };
 
 export const archiveGlazes = async (id: number) => {
+  if (!db) return;
   await db.runAsync("UPDATE glazes SET archived = 1 WHERE id = ?", [id]);
 };
 
 export const deleteMultipleGlazes = async (ids: number[]) => {
+  if (!db || ids.length === 0) return;
   const placeholders = ids.map(() => "?").join(",");
   await db.runAsync(`DELETE FROM glazes WHERE id IN (${placeholders})`, ids);
 };
@@ -129,8 +144,13 @@ export const addGlazes = async (
   date: string,
   temperature: number,
 ) => {
+  if (!db) return;
+
   await db.runAsync(
     "INSERT INTO glazes (name, date, temperature) VALUES (?, ?, ?)",
     [name, date, temperature],
   );
 };
+
+export { db };
+
