@@ -1,34 +1,39 @@
 // Copyright (c) 2026 Saija Joronen
 // Licensed under the MIT License.
 
-import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { Tabs } from "expo-router";
+import { useColorScheme } from "react-native";
 
-import { Colors } from '@/constants/theme';
+import { Colors } from "@/constants/theme";
 
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function AppTabs() {
   const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const colors = Colors[scheme === "unspecified" ? "light" : scheme];
 
   return (
-
-
     <Tabs>
       <Tabs.Screen
         name="calculate"
         options={{
-          title: 'calculate',
+          title: "Seger calculation",
           tabBarIcon: ({ color }) => (
             <AntDesign name="calculator" size={24} color={color} />
           ),
         }}
       />
 
-
+      <Tabs.Screen
+        name="lasitteet"
+        options={{
+          title: "Lasitteet",
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="experiment" size={24} color={color} />
+          ),
+        }}
+      />
     </Tabs>
-
 
     // <NativeTabs
     //   backgroundColor={colors.background}
@@ -55,10 +60,9 @@ export default function AppTabs() {
     //     <AntDesign name="calculator" size={24} color="black" />
     //   </NativeTabs.Trigger>
 
-
     //   <NativeTabs.Trigger name="lasitteet">
     //     <NativeTabs.Trigger.Label>Lasitteet</NativeTabs.Trigger.Label>
-    //     <AntDesign name="experiment" size={24} color="black" />  
+    //     <AntDesign name="experiment" size={24} color="black" />
     //   </NativeTabs.Trigger>
 
     // </NativeTabs>
