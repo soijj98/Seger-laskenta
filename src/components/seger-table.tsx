@@ -13,7 +13,7 @@ function SegerGrid({ seger }: { seger: Record<string, number> }) {
   // grouping oxides to the seger formulas traditional order
   const groups = [
     { label: i18n.t("segerGroupSmelter"), oxides: [...RO_R2O] },
-    { label: i18n.t("SegerGroupStab"), oxides: [...R2O3] },
+    { label: i18n.t("segerGroupStab"), oxides: [...R2O3] },
     { label: i18n.t("segerGroupGlass"), oxides: [...RO2] },
   ];
 
