@@ -1,6 +1,8 @@
 # Glaze Lab 🏺
 > Ceramic Glaze Management and Calculation App — React Native / Expo
 
+A React Native/TypeScript application for managing ceramic glaze recipes and calculating Seger formulas in both directions.
+
 **Status** Work in progress - core features are functional, development continues
 
 ---
