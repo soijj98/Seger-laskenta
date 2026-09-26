@@ -69,12 +69,23 @@ export default function CalculationScreen() {
   const [isForwardModalVisible, setForwardModalVisible] = useState(false);
   const [isReverseModalVisible, setReverseModalVisible] = useState(false);
 
+  //
+  const [ searchQuery, setSearchQuery ] = useState("");
+
   // Raw material list for the engine
   // useMemo prevents recalculation on every render
   const rawMaterialMap = useMemo(
     () => buildRawMaterialMap(materialsDb),
     [materialsDb],
   );
+
+  // filtered
+  const filteredMaterials = useMemo(() => {
+    if (!searchQuery) return materialsDb;
+    return materialsDb.filter((m) => 
+      m.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [materialsDb, searchQuery]);
 
   useEffect(() => {
     const load = async () => {
@@ -113,6 +124,7 @@ export default function CalculationScreen() {
       { raw_material_id: material.id, amount_perc: 0 },
     ]);
     setForwardModalVisible(false);
+    setSearchQuery("");
   };
 
   const removeForwardRow = (index: number) => {
@@ -404,13 +416,23 @@ export default function CalculationScreen() {
       <Modal visible={isForwardModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={styles.header}>{i18n.t("chooseMat")}</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Hae raaka-aineita..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+
           <Button
             title={i18n.t("cancel")}
             color="red"
-            onPress={() => setForwardModalVisible(false)}
+            onPress={() => {
+              setForwardModalVisible(false);
+              setSearchQuery("");
+            }}
           />
           <FlatList
-            data={materialsDb}
+            data={filteredMaterials} //changed to materialsDb -> filteredMaterials
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -429,13 +451,22 @@ export default function CalculationScreen() {
         <View style={styles.modalContainer}>
           <Text style={styles.header}>{i18n.t("chooseMatsToUse")}</Text>
           <Text style={styles.hintText}>{i18n.t("canChooseMany")}</Text>
+          <TextInput
+          style={styles.searchInput}
+          placeholder="Hae raaka-aineita..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          />
           <Button
             title={i18n.t("done")}
             color="green"
-            onPress={() => setReverseModalVisible(false)}
+            onPress={() => {
+              setReverseModalVisible(false);
+              setSearchQuery("");
+            }}
           />
           <FlatList
-            data={materialsDb}
+            data={filteredMaterials}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => {
               const isSelected = !!selectedMaterials.find(
@@ -580,7 +611,19 @@ const styles = StyleSheet.create({
 
   // Modal
   modalContainer: { flex: 1, padding: 20, marginTop: 40 },
+  
   modalItem: { padding: 15, borderBottomWidth: 1, borderBottomColor: "#eee" },
+  
+  searchInput: {borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: "#fff",
+  },
+  
   modalItemSelected: { backgroundColor: "#e8f5e9" },
+  
   modalItemText: { fontSize: 17 },
 });
