@@ -249,6 +249,14 @@ export default function CalculationScreen() {
                       style={styles.input}
                       keyboardType="numeric"
                       placeholder={i18n.t("amount")}
+                      textColor="black"
+                      placeholderTextColor="#a1a1aa"
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: '#a1a1aa',
+                          primary: '#2a7'
+                        }
+                      }}
                       onChangeText={(text) => updateForwardAmount(text, index)}
                     />
                     <IconButton
@@ -313,6 +321,14 @@ Reverse direction: Seger → Recipe */}
                       style={{ width: "100%", backgroundColor: "#fff" }}
                       keyboardType="numeric"
                       placeholder="0"
+                      textColor="black"
+                      placeholderTextColor="#a1a1aa"
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: '#a1a1aa',
+                          primary: '#2a7'
+                      }
+                    }}
                       value={targetSeger[oxide] ?? ""}
                       onChangeText={(text) => updateTargetSeger(oxide, text)}
                     />
@@ -334,6 +350,14 @@ Reverse direction: Seger → Recipe */}
                       style={{ width: "100%", backgroundColor: "#fff" }}
                       keyboardType="numeric"
                       placeholder="0"
+                      textColor="black"
+                      placeholderTextColor="#a1a1aa"
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: '#a1a1aa',
+                          primary: '#2a7'
+                      }
+                    }}
                       value={targetSeger[oxide] ?? ""}
                       onChangeText={(text) => updateTargetSeger(oxide, text)}
                     />
@@ -355,6 +379,14 @@ Reverse direction: Seger → Recipe */}
                       style={{ width: "100%", backgroundColor: "#fff" }}
                       keyboardType="numeric"
                       placeholder="0"
+                      textColor="black"
+                      placeholderTextColor="#a1a1aa"
+                      theme={{
+                        colors: {
+                          onSurfaceVariant: '#a1a1aa',
+                          primary: '#2a7'
+                      }
+                    }}
                       value={targetSeger[oxide] ?? ""}
                       onChangeText={(text) => updateTargetSeger(oxide, text)}
                     />
@@ -549,6 +581,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgb(2, 8, 0)",
+
   },
   modeBtn: {
     flex: 1,
@@ -584,7 +617,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     borderWidth: 4,
-    borderColor: "rgb(65, 114, 69)",
+    borderColor: "rgba(108, 136, 110, 0.79)",
+    elevation: 20,
+    //shadowit ^^
   },
 
   // Reciperow (normal mode)
@@ -593,12 +628,12 @@ const styles = StyleSheet.create({
   materialName: { flex: 2, fontSize: 15, color: "black" },
   //valittu raaka-aine määrä
   input: {
-    flex: 1,
+    width: "35%",
     borderWidth: 1,
     borderColor: "#0c0c0c",
     padding: 2,
     borderRadius: 5,
-    fontSize: 11,
+    fontSize: 15,
     backgroundColor: "rgba(251, 255, 251, 0.66)",
     marginRight: 8,
   },
@@ -685,3 +720,24 @@ const styles = StyleSheet.create({
   
   modalItemText: { fontSize: 17, color: "black" },
 });
+
+// muistiin tämä
+// const shadowStyle = {
+//   shadowColor: "#000",
+//   shadowOffset: { width: 0, height: 2 },
+//   shadowOpacity: 0.1,
+//   shadowRadius: 3,
+//   elevation: 3,
+// };
+
+// const styles = StyleSheet.create({
+//   card: {
+//     ...shadowStyle,
+//     backgroundColor: "#fff",
+//     // muut tyylit...
+//   },
+//   modeBtn: {
+//     ...shadowStyle,
+//     // muut tyylit...
+//   }
+// });
