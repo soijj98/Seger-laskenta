@@ -132,7 +132,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "mgco",
+    "id": "7",
     "nimi": "Magnesiumkarbonaatti",
     "hinta_kg": 2.57,
     "g_mol": 84.3,
@@ -176,7 +176,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "baco",
+    "id": "9",
     "nimi": "Bariumkarbonaatti",
     "hinta_kg": 2.38,
     "g_mol": 197.3,
@@ -220,7 +220,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "srco",
+    "id": "11",
     "nimi": "Strontiumkarbonaatti",
     "hinta_kg": 26.67,
     "g_mol": 147.6,
@@ -264,7 +264,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "zno",
+    "id": "13",
     "nimi": "Sinkkioksidi",
     "hinta_kg": 3.23,
     "g_mol": 81.4,
@@ -308,7 +308,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "al2o3",
+    "id": "15",
     "nimi": "Al2O3",
     "hinta_kg": 0.0,
     "g_mol": 102.0,
@@ -902,7 +902,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "hypla",
+    "id": "50",
     "nimi": "Pallosavi, Hyplas 64",
     "hinta_kg": 0.58,
     "g_mol": 422.7,
@@ -924,7 +924,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "kao",
+    "id": "51",
     "nimi": "Kaoliini, Grolleg",
     "hinta_kg": 0.75,
     "g_mol": 276.3,
@@ -990,7 +990,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "somero",
+    "id": "60",
     "nimi": "Punasavi, Somero",
     "hinta_kg": 1.17,
     "g_mol": 574.4,
@@ -1012,7 +1012,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "bent",
+    "id": "61",
     "nimi": "Bentoniitti, Potclays",
     "hinta_kg": 3.29,
     "g_mol": 513.8,
@@ -1122,7 +1122,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "fff",
+    "id": "80",
     "nimi": "Sekamaasälpä, FFF, Lohja",
     "hinta_kg": 1.02,
     "g_mol": 555.6,
@@ -1188,7 +1188,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "kms",
+    "id": "84",
     "nimi": "K-MS FPF, Varnia",
     "hinta_kg": 0.69,
     "g_mol": 663.827355264989,
@@ -1298,7 +1298,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "peta",
+    "id": "96",
     "nimi": "Petaliitti, Varnia",
     "hinta_kg": 1.97,
     "g_mol": 687.004651162791,
@@ -1320,7 +1320,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "lepido",
+    "id": "97",
     "nimi": "Lepidoliitti, Varnia",
     "hinta_kg": 4.64,
     "g_mol": 330.133405431615,
@@ -1342,7 +1342,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "spodu",
+    "id": "98",
     "nimi": "Spodumeeni, Varnia",
     "hinta_kg": 2.67,
     "g_mol": 405.494194253318,
@@ -1386,7 +1386,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "nefe",
+    "id": "99",
     "nimi": "Nefeliinisyeniitti 3449",
     "hinta_kg": 1.43,
     "g_mol": 447.7,
@@ -1452,7 +1452,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "dolo",
+    "id": "121",
     "nimi": "Dolomiitti",
     "hinta_kg": 1.06,
     "g_mol": 184.4,
@@ -1474,7 +1474,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "ffq",
+    "id": "122",
     "nimi": "Kvartsi, FFQ, Lohja",
     "hinta_kg": 0.31,
     "g_mol": 60.1,
@@ -1518,7 +1518,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "liitu",
+    "id": "124",
     "nimi": "Liitu",
     "hinta_kg": 1.42,
     "g_mol": 100.1,
@@ -1584,7 +1584,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "wolla",
+    "id": "127",
     "nimi": "Wollastoniitti",
     "hinta_kg": 0.76,
     "g_mol": 116.2,
@@ -1672,7 +1672,7 @@
     "MnO2": 0.0
   },
   {
-    "id": "rut",
+    "id": "131",
     "nimi": "Rutiili",
     "hinta_kg": 2.83,
     "g_mol": 79.9,
