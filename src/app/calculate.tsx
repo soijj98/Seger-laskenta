@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 import { Card, IconButton, List, Button as PaperButton, TextInput as PaperTextInput, Text } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RawMaterial, useGlazeDb } from "../hooks/use-glaze-db";
 import {
   ALL_OXIDES,
@@ -37,6 +37,8 @@ type Mode = "forward" | "reverse";
 
 export default function CalculationScreen() {
   const { getRawMaterials } = useGlazeDb();
+
+  const insets = useSafeAreaInsets();
 
   // raw materials from database
   const [materialsDb, setMaterialsDb] = useState<RawMaterial[]>([]);
@@ -228,7 +230,7 @@ export default function CalculationScreen() {
           Normal mode: Recipe → Seger */}
 
       {mode === "forward" && (
-        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}>
           <Text variant= "titleLarge" style={styles.subHeader}>{i18n.t("Recipe")}</Text>
 
           <Card style={styles.card}>
@@ -300,7 +302,7 @@ export default function CalculationScreen() {
       {/* ══════════════════════════════════════════════
 Reverse direction: Seger → Recipe */}
       {mode === "reverse" && (
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}>
           {/* 1. Wanted Seger formula — entered into the formula one oxide at a time*/}
           <Text variant="titleMedium" style={styles.subHeader}>{i18n.t("targetSeger")}</Text>
           <Text variant="bodyMedium" style={styles.hintText}>{i18n.t("instructionsSeger")}</Text>
