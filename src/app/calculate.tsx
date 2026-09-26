@@ -254,7 +254,7 @@ export default function CalculationScreen() {
                     <IconButton
                       icon="trash-can-outline"
                       iconColor="red"
-                      size={24}
+                      size={18}
                       onPress={() => removeForwardRow(index)}
                     />
                   </View>
@@ -264,7 +264,7 @@ export default function CalculationScreen() {
             <PaperButton
               mode="contained"
               icon="plus"
-              style={{ marginTop: 10 }}
+              style={styles.paperButton}
               onPress={() => setForwardModalVisible(true)}
             >
               {i18n.t("plusMat")}
@@ -378,7 +378,7 @@ Reverse direction: Seger → Recipe */}
                     <Text variant="bodyLarge" style={styles.materialName}>{m.name}</Text>
                     <IconButton
                       icon="close"
-                      iconColor="#fff"
+                      iconColor="#0f0d0d"
                       containerColor="#ff4444"
                       size={20}
                       onPress={() => toggleReverseMaterial(m)}
@@ -388,7 +388,7 @@ Reverse direction: Seger → Recipe */}
               )}
               <PaperButton
                 mode="contained"
-                style={{ marginTop: 10 }}
+                style={styles.paperButton}
                 onPress={() => setReverseModalVisible(true)}
               >
                 {i18n.t("chooseMats")}
@@ -456,7 +456,7 @@ Reverse direction: Seger → Recipe */}
             value={searchQuery}
             onChangeText={setSearchQuery}
             right={<PaperTextInput.Icon icon="magnify" />}
-            style={{ marginBottom: 15 }}
+            style={styles.searchInput}
           />
 
           <PaperButton
@@ -477,6 +477,7 @@ Reverse direction: Seger → Recipe */}
             renderItem={({ item }) => (
               <List.Item
                 title={item.name}
+                titleStyle={{color: 'black' }}
                 onPress={() => addForwardMaterial(item)}
                 style={styles.modalItem}
               />
@@ -497,7 +498,7 @@ Reverse direction: Seger → Recipe */}
             value={searchQuery}
             onChangeText={setSearchQuery}
             right={<PaperTextInput.Icon icon="magnify" />}
-            style={{ marginBottom: 15 }}
+            style={styles.searchInput}
           />
 
           <PaperButton
@@ -522,6 +523,7 @@ Reverse direction: Seger → Recipe */}
               return (
                 <List.Item
                   title={item.name}
+                  titleStyle={{ color: "black"}}
                   onPress={() => toggleReverseMaterial(item)}
                   style={[styles.modalItem, isSelected && styles.modalItemSelected]}
                   right={props => isSelected ? <List.Icon {...props} icon="check" color="green" /> : null}
@@ -555,55 +557,58 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   modeBtnActive: { backgroundColor: "rgb(65, 114, 69)" },
-  modeBtnText: { fontWeight: "bold", color: "#2a7" },
+  modeBtnText: { fontWeight: "bold", color: "rgb(65, 114, 69)" },
   modeBtnTextActive: { color: "#fff" },
 
-  header: { fontSize: 22, fontWeight: "bold", marginBottom: 15, marginTop: 30 },
+  header: { fontSize: 22, fontWeight: "bold", marginBottom: 15, marginTop: 30, color:"#050303" },
   subHeader: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
     marginTop: 12,
+    color:"black"
   },
   hintText: {
     fontSize: 13,
-    color: "#666",
+    color: "#180d0d",
     marginBottom: 8,
     fontStyle: "italic",
   },
-  emptyText: { fontStyle: "italic", color: "#888", marginBottom: 8 },
-  errorText: { color: "red", marginBottom: 8 },
+  emptyText: { fontStyle: "italic", color: "#000000", marginBottom: 8 },
+  errorText: { color: "red", marginBottom: 8, backgroundColor: "white", borderColor: "black", borderRadius: 5, padding: 20 },
 
   // Card base for sections
   card: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "rgb(255, 255, 255)",
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderWidth: 4,
+    borderColor: "rgb(65, 114, 69)",
   },
 
   // Reciperow (normal mode)
+  //raaka-aineet
   row: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
-  materialName: { flex: 2, fontSize: 15 },
+  materialName: { flex: 2, fontSize: 15, color: "black" },
+  //valittu raaka-aine määrä
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
+    borderColor: "#0c0c0c",
+    padding: 2,
     borderRadius: 5,
-    backgroundColor: "#fff",
+    fontSize: 11,
+    backgroundColor: "rgba(251, 255, 251, 0.66)",
     marginRight: 8,
   },
-  deleteBtn: { backgroundColor: "#ff4444", padding: 10, borderRadius: 5 },
-  deleteBtnText: { color: "#fff", fontWeight: "bold" },
+ 
 
   // Seger table
   segerGroup: { marginBottom: 10 },
   segerGroupLabel: {
     fontSize: 13,
-    color: "#555",
+    color: "#050202",
     fontWeight: "600",
     marginBottom: 6,
   },
@@ -617,7 +622,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
   },
-  oxideName: { fontWeight: "bold", fontSize: 13, color: "#333" },
+  oxideName: { fontWeight: "bold", fontSize: 13, color: "#000000" },
   oxideValue: { fontSize: 15, color: "#007bff" },
 
   // Seger input fields (reverse direction)
@@ -651,20 +656,32 @@ const styles = StyleSheet.create({
   resultPerc: { fontSize: 15, fontWeight: "bold", color: "#2a7" },
 
   // Modal
-  modalContainer: { flex: 1, padding: 20, marginTop: 40 },
+  modalContainer: { flex: 1, padding: 20, marginTop: 40, color:"black"},
   
-  modalItem: { padding: 15, borderBottomWidth: 1, borderBottomColor: "#eee" },
+  modalItem: { padding: 15, borderBottomWidth: 1, borderBottomColor: "#eee", },
   
-  searchInput: {borderWidth: 1,
+  paperButton: 
+  {
+    margin: 10,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "black",
+    borderRadius: 15
+  },
+
+  searchInput:
+  {
+    borderWidth: 1,
     borderColor: "#ccc",
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
     fontSize: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#f1ecec",
+    color: "black"
   },
   
-  modalItemSelected: { backgroundColor: "#e8f5e9" },
+  modalItemSelected: {  },
   
-  modalItemText: { fontSize: 17 },
+  modalItemText: { fontSize: 17, color: "black" },
 });
