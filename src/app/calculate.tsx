@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Button,
+  //   Button,
   FlatList,
   Modal,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
+  //   Text,
+  //   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { Card, IconButton, List, Button as PaperButton, TextInput as PaperTextInput, Text } from 'react-native-paper';
 import { RawMaterial, useGlazeDb } from "../hooks/use-glaze-db";
 import {
   ALL_OXIDES,
@@ -226,44 +228,55 @@ export default function CalculationScreen() {
           Normal mode: Recipe → Seger */}
 
       {mode === "forward" && (
-        <ScrollView>
-          <Text style={styles.subHeader}>{i18n.t("Recipe")}</Text>
+        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+          <Text variant= "titleLarge" style={styles.subHeader}>{i18n.t("Recipe")}</Text>
 
-          <View style={styles.card}>
-            {recipeRows.length === 0 ? (
-              <Text style={styles.emptyText}>{i18n.t("addMat")}</Text>
-            ) : (
+          <Card style={styles.card}>
+            <Card.Content>
+              {recipeRows.length === 0 ? (
+                <Text style={styles.emptyText}>{i18n.t("addMat")}</Text>
+              ) : (
               recipeRows.map((row, index) => {
                 const material = rawMaterialMap[row.raw_material_id];
                 return (
                   <View key={index} style={styles.row}>
-                    <Text style={styles.materialName}>
+                    <Text variant="bodyLarge" style={styles.materialName}>
                       {material ? material.name : i18n.t("unknown")}
                     </Text>
-                    <TextInput
+
+                    <PaperTextInput
+                      mode="outlined"
                       style={styles.input}
                       keyboardType="numeric"
                       placeholder={i18n.t("amount")}
                       onChangeText={(text) => updateForwardAmount(text, index)}
                     />
-                    <TouchableOpacity
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor="red"
+                      size={24}
                       onPress={() => removeForwardRow(index)}
-                      style={styles.deleteBtn}
-                    >
-                      <Text style={styles.deleteBtnText}>✕</Text>
-                    </TouchableOpacity>
+                    />
                   </View>
                 );
               })
             )}
-            <Button
-              title={i18n.t("plusMat")}
+            <PaperButton
+              mode="contained"
+              icon="plus"
+              style={{ marginTop: 10 }}
               onPress={() => setForwardModalVisible(true)}
-            />
-          </View>
+            >
+              {i18n.t("plusMat")}
+            </PaperButton>
+          </Card.Content>
+        </Card>
 
-          <Text style={styles.subHeader}>{i18n.t("calculatedSeger")}</Text>
-          <View style={styles.card}>
+
+
+          <Text variant="titleMedium"style={styles.subHeader}>{i18n.t("calculatedSeger")}</Text>
+          <Card style={styles.card}>
+            <Card.Content>
             {forwardError ? (
               <Text style={styles.errorText}>{forwardError}</Text>
             ) : segerResult ? (
@@ -271,110 +284,127 @@ export default function CalculationScreen() {
             ) : (
               <Text style={styles.emptyText}>{i18n.t("addMatForSeger")}</Text>
             )}
-          </View>
+            </Card.Content>
+          </Card>
         </ScrollView>
       )}
 
       {/* ══════════════════════════════════════════════
-          Reverse direction: Seger → Recipe */}
+Reverse direction: Seger → Recipe */}
       {mode === "reverse" && (
         <ScrollView>
           {/* 1. Wanted Seger formula — entered into the formula one oxide at a time*/}
-          <Text style={styles.subHeader}>{i18n.t("targetSeger")}</Text>
-          <Text style={styles.hintText}>{i18n.t("instructionsSeger")}</Text>
+          <Text variant="titleMedium" style={styles.subHeader}>{i18n.t("targetSeger")}</Text>
+          <Text variant="bodyMedium" style={styles.hintText}>{i18n.t("instructionsSeger")}</Text>
 
-          <View style={styles.card}>
-            {/* RO / R2O group */}
-            <Text style={styles.segerGroupLabel}>
-              {i18n.t("segerGroupSmelter")}
-            </Text>
-            <View style={styles.grid}>
-              {[...RO_R2O].map((oxide) => (
-                <View key={oxide} style={styles.oxideInputItem}>
-                  <Text style={styles.oxideName}>{oxide.toUpperCase()}</Text>
-                  <TextInput
-                    style={styles.oxideInput}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    value={targetSeger[oxide] ?? ""}
-                    onChangeText={(text) => updateTargetSeger(oxide, text)}
-                  />
-                </View>
-              ))}
-            </View>
+          <Card style={styles.card}>
+            <Card.Content>
+              {/* RO / R2O group */}
+              <Text variant="labelLarge" style={styles.segerGroupLabel}>
+                {i18n.t("segerGroupSmelter")}
+              </Text>
+              <View style={styles.grid}>
+                {[...RO_R2O].map((oxide) => (
+                  <View key={oxide} style={styles.oxideInputItem}>
+                    <Text variant="labelMedium" style={styles.oxideName}>{oxide.toUpperCase()}</Text>
+                    <PaperTextInput
+                      mode="outlined"
+                      dense={true}
+                      style={{ width: "100%", backgroundColor: "#fff" }}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      value={targetSeger[oxide] ?? ""}
+                      onChangeText={(text) => updateTargetSeger(oxide, text)}
+                    />
+                  </View>
+                ))}
+              </View>
 
-            {/* R2O3 group */}
-            <Text style={styles.segerGroupLabel}>
-              {i18n.t("segerGroupStab")}
-            </Text>
-            <View style={styles.grid}>
-              {[...R2O3].map((oxide) => (
-                <View key={oxide} style={styles.oxideInputItem}>
-                  <Text style={styles.oxideName}>{oxide.toUpperCase()}</Text>
-                  <TextInput
-                    style={styles.oxideInput}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    value={targetSeger[oxide] ?? ""}
-                    onChangeText={(text) => updateTargetSeger(oxide, text)}
-                  />
-                </View>
-              ))}
-            </View>
+              {/* R2O3 group */}
+              <Text variant="labelLarge" style={[styles.segerGroupLabel, { marginTop: 15 }]}>
+                {i18n.t("segerGroupStab")}
+              </Text>
+              <View style={styles.grid}>
+                {[...R2O3].map((oxide) => (
+                  <View key={oxide} style={styles.oxideInputItem}>
+                    <Text variant="labelMedium" style={styles.oxideName}>{oxide.toUpperCase()}</Text>
+                    <PaperTextInput
+                      mode="outlined"
+                      dense={true}
+                      style={{ width: "100%", backgroundColor: "#fff" }}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      value={targetSeger[oxide] ?? ""}
+                      onChangeText={(text) => updateTargetSeger(oxide, text)}
+                    />
+                  </View>
+                ))}
+              </View>
 
-            {/* RO2 group */}
-            <Text style={styles.segerGroupLabel}>
-              {i18n.t("segerGroupGlass")}
-            </Text>
-            <View style={styles.grid}>
-              {[...RO2].map((oxide) => (
-                <View key={oxide} style={styles.oxideInputItem}>
-                  <Text style={styles.oxideName}>{oxide.toUpperCase()}</Text>
-                  <TextInput
-                    style={styles.oxideInput}
-                    keyboardType="numeric"
-                    placeholder="0"
-                    value={targetSeger[oxide] ?? ""}
-                    onChangeText={(text) => updateTargetSeger(oxide, text)}
-                  />
-                </View>
-              ))}
-            </View>
-          </View>
+              {/* RO2 group */}
+              <Text variant="labelLarge" style={[styles.segerGroupLabel, { marginTop: 15 }]}>
+                {i18n.t("segerGroupGlass")}
+              </Text>
+              <View style={styles.grid}>
+                {[...RO2].map((oxide) => (
+                  <View key={oxide} style={styles.oxideInputItem}>
+                    <Text variant="labelMedium" style={styles.oxideName}>{oxide.toUpperCase()}</Text>
+                    <PaperTextInput
+                      mode="outlined"
+                      dense={true}
+                      style={{ width: "100%", backgroundColor: "#fff" }}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      value={targetSeger[oxide] ?? ""}
+                      onChangeText={(text) => updateTargetSeger(oxide, text)}
+                    />
+                  </View>
+                ))}
+              </View>
+            </Card.Content>
+          </Card>
 
           {/* 2. Choosing materials */}
-          <Text style={styles.subHeader}>{i18n.t("chosenMats")}</Text>
-          <Text style={styles.hintText}>{i18n.t("chosenMatsInstr")}</Text>
+          <Text variant="titleMedium" style={styles.subHeader}>{i18n.t("chosenMats")}</Text>
+          <Text variant="bodyMedium" style={styles.hintText}>{i18n.t("chosenMatsInstr")}</Text>
 
-          <View style={styles.card}>
-            {selectedMaterials.length === 0 ? (
-              <Text style={styles.emptyText}>{i18n.t("matsNotChosen")}</Text>
-            ) : (
-              selectedMaterials.map((m) => (
-                <View key={m.id} style={styles.row}>
-                  <Text style={styles.materialName}>{m.name}</Text>
-                  <TouchableOpacity
-                    onPress={() => toggleReverseMaterial(m)}
-                    style={styles.deleteBtn}
-                  >
-                    <Text style={styles.deleteBtnText}>✕</Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
-            <Button
-              title={i18n.t("chooseMats")}
-              onPress={() => setReverseModalVisible(true)}
-            />
-          </View>
+          <Card style={styles.card}>
+            <Card.Content>
+              {selectedMaterials.length === 0 ? (
+                <Text style={styles.emptyText}>{i18n.t("matsNotChosen")}</Text>
+              ) : (
+                selectedMaterials.map((m) => (
+                  <View key={m.id} style={styles.row}>
+                    <Text variant="bodyLarge" style={styles.materialName}>{m.name}</Text>
+                    <IconButton
+                      icon="close"
+                      iconColor="#fff"
+                      containerColor="#ff4444"
+                      size={20}
+                      onPress={() => toggleReverseMaterial(m)}
+                    />
+                  </View>
+                ))
+              )}
+              <PaperButton
+                mode="contained"
+                style={{ marginTop: 10 }}
+                onPress={() => setReverseModalVisible(true)}
+              >
+                {i18n.t("chooseMats")}
+              </PaperButton>
+            </Card.Content>
+          </Card>
 
           {/* 3. Calc button */}
-          <View style={{ marginVertical: 10 }}>
-            <Button
-              title={i18n.t("calcRecipe")}
-              color="#2a7"
+          <View style={{ marginVertical: 15 }}>
+            <PaperButton
+              mode="contained"
+              buttonColor="#2a7"
               onPress={runReverseCalculation}
-            />
+            >
+              {i18n.t("calcRecipe")}
+            </PaperButton>
           </View>
 
           {/* 4. outcome */}
@@ -382,29 +412,33 @@ export default function CalculationScreen() {
 
           {reverseResult && (
             <>
-              <Text style={styles.subHeader}>{i18n.t("calcRecipe")}</Text>
-              <View style={styles.card}>
-                {reverseResult.map((row, i) => {
-                  const m = rawMaterialMap[row.raw_material_id];
-                  return (
-                    <View key={i} style={styles.resultRow}>
-                      <Text style={styles.materialName}>
-                        {m?.name ?? i18n.t("unknown")}
-                      </Text>
-                      <Text style={styles.resultPerc}>
-                        {row.amount_perc.toFixed(1)} %
-                      </Text>
-                    </View>
-                  );
-                })}
-              </View>
+              <Text variant="titleMedium" style={styles.subHeader}>{i18n.t("calcRecipe")}</Text>
+              <Card style={styles.card}>
+                <Card.Content>
+                  {reverseResult.map((row, i) => {
+                    const m = rawMaterialMap[row.raw_material_id];
+                    return (
+                      <View key={i} style={styles.resultRow}>
+                        <Text variant="bodyLarge" style={styles.materialName}>
+                          {m?.name ?? i18n.t("unknown")}
+                        </Text>
+                        <Text variant="titleMedium" style={styles.resultPerc}>
+                          {row.amount_perc.toFixed(1)} %
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </Card.Content>
+              </Card>
 
               {reverseSeger && (
                 <>
-                  <Text style={styles.subHeader}>{i18n.t("realizedForm")}</Text>
-                  <View style={styles.card}>
-                    <SegerGrid seger={reverseSeger} />
-                  </View>
+                  <Text variant="titleMedium" style={styles.subHeader}>{i18n.t("realizedForm")}</Text>
+                  <Card style={styles.card}>
+                    <Card.Content>
+                      <SegerGrid seger={reverseSeger} />
+                    </Card.Content>
+                  </Card>
                 </>
               )}
             </>
@@ -415,32 +449,37 @@ export default function CalculationScreen() {
       {/* ── MODAL: Choosing materials (normal mode)── */}
       <Modal visible={isForwardModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={styles.header}>{i18n.t("chooseMat")}</Text>
-          <TextInput
-            style={styles.searchInput}
+          <Text variant="headlineSmall" style={styles.header}>{i18n.t("chooseMat")}</Text>
+          <PaperTextInput
+            mode="outlined"
             placeholder="Hae raaka-aineita..."
             value={searchQuery}
             onChangeText={setSearchQuery}
+            right={<PaperTextInput.Icon icon="magnify" />}
+            style={{ marginBottom: 15 }}
           />
 
-          <Button
-            title={i18n.t("cancel")}
-            color="red"
+          <PaperButton
+            mode="contained"
+            buttonColor="red"
             onPress={() => {
               setForwardModalVisible(false);
               setSearchQuery("");
             }}
-          />
+            style={{ marginBottom: 15 }}
+          >
+            {i18n.t("cancel")}
+          </PaperButton>
+          
           <FlatList
-            data={filteredMaterials} //changed to materialsDb -> filteredMaterials
+            data={filteredMaterials}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.modalItem}
+              <List.Item
+                title={item.name}
                 onPress={() => addForwardMaterial(item)}
-              >
-                <Text style={styles.modalItemText}>{item.name}</Text>
-              </TouchableOpacity>
+                style={styles.modalItem}
+              />
             )}
           />
         </View>
@@ -449,22 +488,30 @@ export default function CalculationScreen() {
       {/* ── MODAL: choosing materials (reverse direction, multiple-choice) ── */}
       <Modal visible={isReverseModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={styles.header}>{i18n.t("chooseMatsToUse")}</Text>
-          <Text style={styles.hintText}>{i18n.t("canChooseMany")}</Text>
-          <TextInput
-          style={styles.searchInput}
-          placeholder="Hae raaka-aineita..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
+          <Text variant="headlineSmall" style={styles.header}>{i18n.t("chooseMatsToUse")}</Text>
+          <Text variant="bodyMedium" style={styles.hintText}>{i18n.t("canChooseMany")}</Text>
+          
+          <PaperTextInput
+            mode="outlined"
+            placeholder="Hae raaka-aineita..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            right={<PaperTextInput.Icon icon="magnify" />}
+            style={{ marginBottom: 15 }}
           />
-          <Button
-            title={i18n.t("done")}
-            color="green"
+
+          <PaperButton
+            mode="contained"
+            buttonColor="green"
             onPress={() => {
               setReverseModalVisible(false);
               setSearchQuery("");
             }}
-          />
+            style={{ marginBottom: 15 }}
+          >
+            {i18n.t("done")}
+          </PaperButton>
+
           <FlatList
             data={filteredMaterials}
             keyExtractor={(item) => item.id.toString()}
@@ -473,18 +520,12 @@ export default function CalculationScreen() {
                 (m) => m.id === item.id,
               );
               return (
-                <TouchableOpacity
-                  style={[
-                    styles.modalItem,
-                    isSelected && styles.modalItemSelected,
-                  ]}
+                <List.Item
+                  title={item.name}
                   onPress={() => toggleReverseMaterial(item)}
-                >
-                  <Text style={styles.modalItemText}>
-                    {isSelected ? "✓ " : "   "}
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
+                  style={[styles.modalItem, isSelected && styles.modalItemSelected]}
+                  right={props => isSelected ? <List.Icon {...props} icon="check" color="green" /> : null}
+                />
               );
             }}
           />
@@ -505,7 +546,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#2a7",
+    borderColor: "rgb(2, 8, 0)",
   },
   modeBtn: {
     flex: 1,
@@ -513,7 +554,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
-  modeBtnActive: { backgroundColor: "#2a7" },
+  modeBtnActive: { backgroundColor: "rgb(65, 114, 69)" },
   modeBtnText: { fontWeight: "bold", color: "#2a7" },
   modeBtnTextActive: { color: "#fff" },
 
