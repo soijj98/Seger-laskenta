@@ -77,6 +77,8 @@ The database is initialized and raw materials are seeded automatically on the fi
 
 ---
 
+Live Demo: https://seger-laskenta-blush.vercel.app/calculate
+
 ## Background
 I am a ceramics hobbyist and a software development student. This project combines both — I wanted to build a tool I actually use, not just a practice app.
 
