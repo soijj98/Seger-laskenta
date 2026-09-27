@@ -30,7 +30,9 @@ The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares)
 
 ## Features
 
-### Glaze List
+### Glaze List *(In Development)*
+> The glaze list functionality is currently under development.
+
 * Add, delete, and archive glazes
 * Swipe left to delete (swipe-to-delete)
 * Long press → Cancel / Archive / Delete
