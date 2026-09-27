@@ -28,7 +28,7 @@ const translations = {
     chosenMatsInstr:
       "Select which raw materials the calculator can use. The more you select, the better the result.",
     matsNotChosen: "No raw materials selected.",
-    chooseMats: "+ Select raw materials",
+    chooseMats: "Select raw materials",
     calcRecipe: "Calculate Recipe",
     calcedRecipe: "Calculated Recipe",
     unknown: "Unknown",
@@ -89,7 +89,7 @@ const translations = {
     rawMaterials: "Raaka-aineet",
     addMat: "Resepti on tyhjä. Lisää raaka-aineita.",
     amount: "Määrä %",
-    plusMat: "+ Lisää raaka-aine",
+    plusMat: "Lisää raaka-aine",
     calculatedSeger: "Laskettu Seger-kaava",
     addMatForSeger: "Lisää raaka-aineita ja määrät nähdäksesi Seger-kaavan.",
     targetSeger: "Haluttu Seger-kaava",

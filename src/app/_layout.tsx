@@ -7,7 +7,7 @@ import { MD3DarkTheme, PaperProvider } from 'react-native-paper';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
 import { initDB, seedIngredients } from '@/lib/db';
- 
+import * as Sentry from '@sentry/react-native';
 
   const customDarkTheme = {
     ...MD3DarkTheme,
@@ -21,13 +21,30 @@ import { initDB, seedIngredients } from '@/lib/db';
   },
 };
 
+Sentry.init({
+  dsn: 'https://98907ddcd5d2941948bd3e0cffac5cb3@o4512157383196672.ingest.de.sentry.io/4512157405020240',
 
-export default function TabLayout() {
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
 
-  
+  // Enable Logs
+  enableLogs: true,
 
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
+
+
+
+// Määritellään itse App-komponentti
+function App() {
   const colorScheme = useColorScheme();
-  
   const [dbReady, setDbready] = useState(false);
 
   useEffect(() => {
@@ -44,20 +61,19 @@ export default function TabLayout() {
     setupDb();
   }, []);
 
-
-  
   if (!dbReady) return null;
 
   return (
     <PaperProvider theme={customDarkTheme}>
       <GestureHandlerRootView style={{ flex: 1 }}>  
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-      </ThemeProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <AnimatedSplashOverlay />
+          <AppTabs />
+        </ThemeProvider>
       </GestureHandlerRootView>
     </PaperProvider>
-
-
   );
 }
+
+// Kääritään App-komponentti Sentryyn tiedoston lopussa
+export default Sentry.wrap(App);

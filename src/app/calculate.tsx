@@ -26,8 +26,9 @@ import {
 } from "../lib/glaze-engine";
 import i18n from "../lib/i18n/i18n";
 
+import * as Sentry from '@sentry/react-native';
+import { TextInput } from "react-native-gesture-handler";
 import SegerGrid from "../components/seger-table";
-
 type Mode = "forward" | "reverse";
 
 // apufunktio
@@ -75,6 +76,10 @@ export default function CalculationScreen() {
 
   //
   const [ searchQuery, setSearchQuery ] = useState("");
+  
+  //palaute textinput
+  const [ palaute, setPalaute ] = useState<string>("");
+  const [ naytaLomake, setNaytaLomake ] = useState<boolean>(false);
 
   // Raw material list for the engine
   // useMemo prevents recalculation on every render
@@ -142,6 +147,26 @@ export default function CalculationScreen() {
     );
   };
 
+  // --- Bugi funktioni --- //
+
+  const handleBugReport = () => {
+    Sentry.captureMessage(`Käyttäjän ilmoitus: ${palaute}`, {
+      level: 'warning', // Voit luokitella viestin (info, warning, error)
+    });
+  
+    alert("Kiitos palautteesta! Bugi on kirjattu.");
+    setPalaute('');
+    setNaytaLomake(false);
+  };
+  
+  const peruuta = () => {
+    setPalaute('');
+    setNaytaLomake(false);
+  };
+
+
+
+
   // ─── Reverse direction functions  ───────────────────────────────────────────
 
   const updateTargetSeger = (oxide: string, text: string) => {
@@ -197,6 +222,7 @@ export default function CalculationScreen() {
   return (
     <View style={styles.container}>
       {/* State option: two buttons at top */}
+
       <View style={styles.modeRow}>
         <TouchableOpacity
           style={[styles.modeBtn, mode === "forward" && styles.modeBtnActive]}
@@ -296,6 +322,41 @@ export default function CalculationScreen() {
             )}
             </Card.Content>
           </Card>
+
+          <View style={styles.bugReportSection}>
+            {!naytaLomake ? (
+              // Tila A: Näytetään vain avausnappi
+              <PaperButton mode="outlined" onPress={() => setNaytaLomake(true)}>
+                Ilmoita bugista
+              </PaperButton>
+            ) : (
+              // Tila B: Näytetään tekstikenttä ja napit
+              <View>
+                <Text style={styles.bugTitle}>Mitä tapahtui ja miten sen voi toistaa?</Text>
+                <TextInput
+
+                  placeholder="Kirjoita tähän..."
+                  multiline={true}
+                  numberOfLines={4}
+                  value={palaute}
+                  onChangeText={setPalaute}
+                  style={styles.input}
+                />
+                
+                <View style={styles.buttonRow}>
+                  <PaperButton onPress={peruuta}>Peruuta</PaperButton>
+                  <PaperButton 
+                    mode="contained" 
+                    onPress={handleBugReport} 
+                    disabled={palaute.trim().length === 0}
+                  >
+                    Lähetä
+                  </PaperButton>
+                </View>
+            </View>
+          )}
+          </View>
+        
         </ScrollView>
       )}
 
@@ -517,6 +578,7 @@ Reverse direction: Seger → Recipe */}
               />
             )}
           />
+
         </View>
       </Modal>
 
@@ -566,13 +628,35 @@ Reverse direction: Seger → Recipe */}
             }}
           />
         </View>
-      </Modal>
+      </Modal>       
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: "#fff" },
+  container: { 
+    flex: 1, 
+    padding: 15, 
+    backgroundColor: "#fff" 
+  },
+  
+  bugReportSection: {
+    marginTop: 40,
+    paddingTop: 20,
+    borderWidth: 1,
+    borderColor: '#333'
+  },
+
+  bugTitle: {
+    marginBottom: 10,
+    color: '#e0e0e0',
+  },
+
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
 
   // status buttons
   modeRow: {

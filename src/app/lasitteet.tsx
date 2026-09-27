@@ -1,23 +1,23 @@
 import { ThemedView } from "@/components/themed-view";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    Button,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { FlatList, Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-    addGlazes,
-    archiveGlazes,
-    deleteGlazes,
-    deleteMultipleGlazes,
-    getGlazes,
+  addGlazes,
+  archiveGlazes,
+  deleteGlazes,
+  deleteMultipleGlazes,
+  getGlazes,
 } from "../lib/db";
 import i18n from "../lib/i18n/i18n";
 
@@ -151,7 +151,7 @@ export default function GlazesScreen() {
 
           <View>
             <Text> {item.name}</Text>
-            {/*<Text> {item.date} | Lämpötila: {item.temperature}</Text>    {tektiä kääntää*/}
+            <Text> {item.date} | Lämpötila: {item.temperature}</Text>    
             {/*<Text> {item.archived}</Text>*/}
           </View>
         </TouchableOpacity>
@@ -186,7 +186,7 @@ export default function GlazesScreen() {
 
       <ThemedView style={styles.buttonRow}>
         <Button title={i18n.t("glaze")} onPress={() => sortData("name")} />
-        {/*<Button title={i18n.t("glazeDate")} onPress={() => sortData('date')} />*/}
+        <Button title={i18n.t("glazeDate")} onPress={() => sortData('date')} />
         <Button
           title={i18n.t("glazeTemp")}
           onPress={() => sortData("temperature")}

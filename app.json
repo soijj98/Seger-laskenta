@@ -37,7 +37,16 @@
         }
       ],
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      "@sentry/react-native",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "seger-calculation",
+          "organization": "saija-joronen"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

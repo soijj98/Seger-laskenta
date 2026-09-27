@@ -19,7 +19,7 @@ export default function AppTabs() {
       <TabSlot style={{ height: "100%" }} />
       <TabList asChild>
         <CustomTabList>
-          <TabTrigger name="calculate" href="/calculate" asChild>
+          <TabTrigger name="seger-calculate" href="/calculate" asChild>
             <TabButton>Seger calculation</TabButton>
           </TabTrigger>
           <TabTrigger name="lasitteet" href="/lasitteet" asChild>
