@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Saija Joronen
 // Licensed under the MIT License.
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SQLite from "expo-sqlite";
 import { Platform } from "react-native";
 import i18n from "./i18n/i18n";
@@ -12,8 +13,6 @@ let db: SQLite.SQLiteDatabase | null = null;
 if (Platform.OS !== "web") {
   db = SQLite.openDatabaseSync("glazes.db");
 }
-
-//const db = await SQLite.openDatabaseAsync("glazes.db");
 
 export const initDB = async () => {
 
@@ -56,6 +55,17 @@ export const initDB = async () => {
 //                 mno2 REAL DEFAULT 0
 //             );
 //         `);
+};
+
+
+export const getDeviceId = async () => {
+  let deviceId = await AsyncStorage.getItem('device_id');
+  if (!deviceId) {
+    // Luodaan satunnainen tunniste, esim. "guest-a1b2c3d4"
+    deviceId = 'guest-' + Math.random().toString(36).substring(2, 15);
+    await AsyncStorage.setItem('device_id', deviceId);
+  }
+  return deviceId;
 };
 
 export const seedIngredients = async () => {
@@ -113,9 +123,11 @@ export const seedIngredients = async () => {
 };
 
 export const getGlazes = async () => {
+  const deviceId = await getDeviceId();
   const { data, error } = await supabase
     .from('glazes')
-    .select('*');
+    .select('*')
+    .eq('device_id', deviceId);
 
     if (error) {
       console.error('Virhe haettaessa lasitteita:', error);
@@ -126,33 +138,40 @@ export const getGlazes = async () => {
 
 
 export const deleteGlazes = async (id: number) => {
+  const deviceId = await getDeviceId();
   await supabase
     .from('glazes')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('device_id', deviceId);
 };
 
 
 
 export const archiveGlazes = async (id: number) => {
+  const deviceId = await getDeviceId();
   await supabase
   .from('glazes')
   .update({ archived: true })
-  .eq('id', id);
+  .eq('id', id)
+  .eq('device_id', deviceId);
 };
 
 export const deleteMultipleGlazes = async (ids: number[]) => {
   if (ids.length === 0) return;
+  const deviceId = await getDeviceId();
   await supabase
   .from('glazes')
   .delete()
-  .in('id', ids);
+  .in('id', ids)
+  .eq('device_id', deviceId);
 };
 
 export const addGlazes = async (name: string, date: string, temperature: number) => {
+  const deviceId = await getDeviceId();
   await supabase
   .from('glazes')
-  .insert([{ name, date, temperature, archived: false }]);
+  .insert([{ name, date, temperature, archived: false, device_id: deviceId }]);
 };
 
 export const saveGlazeRecipe = async (
@@ -161,9 +180,10 @@ export const saveGlazeRecipe = async (
   temperature: number,
   recipeRows: { raw_material_id: number; amount_perc: number }[]
   ) => {
+    const deviceId = await getDeviceId();
     const { data: glazeData, error: glazeError } = await supabase
       .from('glazes')
-      .insert([{ name, date, temperature, archived: false }])
+      .insert([{ name, date, temperature, archived: false, device_id: deviceId }])
       .select('id')
       .single()
 

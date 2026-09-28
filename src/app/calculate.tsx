@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, } from "react-native";
+import { Button as PaperButton, TextInput } from "react-native-paper";
 import { RawMaterial, useGlazeDb } from "../hooks/use-glaze-db";
 import { buildRawMaterialMap } from "../lib/glaze-engine";
 import i18n from "../lib/i18n/i18n";
@@ -61,6 +62,40 @@ export default function CalculationScreen() {
   return (
     <View style={styles.container}>
       {/* State option: two buttons at top */}
+
+      <View style={styles.bugReportSection}>
+        {!naytaLomake ? (
+          // Tila A: Näytetään vain avausnappi
+          <PaperButton mode="outlined" onPress={() => setNaytaLomake(true)}>
+            Huomasitko bugin?
+          </PaperButton>
+        ) : (
+          // Tila B: Näytetään tekstikenttä ja napit
+          <View>
+            <Text style={styles.bugTitle}>Mitä tapahtui ja miten sen voi toistaa?</Text>
+            <TextInput
+
+              placeholder="Kirjoita tähän..."
+              multiline={true}
+              numberOfLines={4}
+              value={palaute}
+              onChangeText={setPalaute}
+              style={styles.input}
+            />
+            
+            <View style={styles.buttonRow}>
+              <PaperButton onPress={peruuta}>Peruuta</PaperButton>
+              <PaperButton 
+                mode="contained" 
+                onPress={handleBugReport} 
+                disabled={palaute.trim().length === 0}
+              >
+                Lähetä
+              </PaperButton>
+            </View>
+        </View>
+        )}
+      </View>
 
       <View style={styles.modeRow}>
         <TouchableOpacity
@@ -154,6 +189,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#020101',
   },
+
+  input: {
+        width: "35%",
+        borderWidth: 1,
+        borderColor: "#0c0c0c",
+        padding: 2,
+        borderRadius: 5,
+        fontSize: 15,
+        backgroundColor: "rgba(251, 255, 251, 0.66)",
+        marginRight: 8,
+    },
 
   buttonRow: {
     flexDirection: 'row',
