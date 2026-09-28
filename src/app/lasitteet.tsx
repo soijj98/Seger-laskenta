@@ -1,25 +1,10 @@
-import { ThemedView } from "@/components/themed-view";
 import { useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Alert, Modal, StyleSheet, View } from "react-native";
 import { FlatList, Swipeable } from "react-native-gesture-handler";
+import { Avatar, Card, IconButton, Button as PaperButton, TextInput as PaperTextInput, Text } from 'react-native-paper';
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  addGlazes,
-  archiveGlazes,
-  deleteGlazes,
-  deleteMultipleGlazes,
-  getGlazes,
-} from "../lib/db";
+import { addGlazes, deleteGlazes, getGlazes, mergeGuestDataToUser } from "../lib/db";
 import i18n from "../lib/i18n/i18n";
 import { supabase } from "../lib/supabase";
 
@@ -33,16 +18,30 @@ interface Glazes {
 
 export default function GlazesScreen() {
   const [glazes, setGlazes] = useState<Glazes[]>([]);
-  const [selectedId, setSelectedId] = useState<number[]>([]);
-
   const [newGlaze, setNewGlaze] = useState("");
-  const [newDate, setNewDate] = useState("");
-  const [newTemperature, setNewTemperature] = useState("");
 
-  // Uudet tilat reseptin katseluikkunaa varten
+
   const [recipeModalVisible, setRecipeModalVisible] = useState(false);
   const [selectedGlaze, setSelectedGlaze] = useState<Glazes | null>(null);
   const [recipeDetails, setRecipeDetails] = useState<any[]>([]);
+
+
+  const [user, setUser] = useState<any>(null);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const loadData = async () => {
     try {
@@ -55,22 +54,44 @@ export default function GlazesScreen() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [user]); 
 
-  const handleAddGlaze = async () => {
-    if (!newGlaze) {
-      Alert.alert(i18n.t("error"), i18n.t("glazeNamePlaceholder"));
-      return;
+
+  const handleAuth = async (isSignUp: boolean) => {
+    if (isSignUp) {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        Alert.alert("Virhe rekisteröinnissä", error.message);
+      } else if (data.user) {
+        await mergeGuestDataToUser(data.user.id);
+        Alert.alert("Tili luotu!", "Lasitteesi on tallennettu pilveen.");
+        setAuthModalVisible(false);
+        loadData();
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        Alert.alert("Virhe kirjautumisessa", error.message);
+      } else {
+        setAuthModalVisible(false);
+      }
     }
+    setEmail("");
+    setPassword("");
+  };
 
-    const dateToSave = newDate || "";
-    const tempToSave = newTemperature ? parseInt(newTemperature, 10) : 0;
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setAuthModalVisible(false);
+  };
 
-    await addGlazes(newGlaze, dateToSave, tempToSave);
-
+  // --- LASITTEIDEN HALLINTA ---
+  const handleAddGlaze = async () => {
+    if (!newGlaze) return Alert.alert(i18n.t("error"), i18n.t("glazeNamePlaceholder"));
+    
+    // Syötetään tyhjät arvot päivämäärälle ja lämpötilalle, jotta db.ts ei kaadu
+    await addGlazes(newGlaze, "", 0);
     setNewGlaze("");
-    setNewDate("");
-    setNewTemperature("");
     loadData();
   };
 
@@ -79,74 +100,18 @@ export default function GlazesScreen() {
     loadData();
   };
 
-  const handleLongPress = (id: number) => {
-    Alert.alert(
-      `${i18n.t("manageGlazes")}`,
-      `${i18n.t("doYouWantremoveGlaze")}`,
-      [
-        { text: i18n.t("cancel") },
-        {
-          text: i18n.t("archive"),
-          onPress: async () => {
-            await archiveGlazes(id);
-            loadData();
-          },
-        },
-        {
-          text: i18n.t("ok"),
-          onPress: async () => {
-            await deleteGlazes(id);
-            loadData();
-          },
-        },
-      ],
-    );
-  };
-
-  const toggleSelection = (id: number) => {
-    if (selectedId.includes(id)) {
-      setSelectedId(selectedId.filter((selectedId) => selectedId !== id));
-    } else {
-      setSelectedId([...selectedId, id]);
-    }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (selectedId.length > 0) {
-      await deleteMultipleGlazes(selectedId);
-      setSelectedId([]);
-      loadData();
-    }
-  };
-
-  const sortData = (way: "name" | "date" | "temperature") => {
-    const sorted = [...glazes].sort((a, b) => {
-      if (a[way] < b[way]) return -1;
-      if (a[way] > b[way]) return 1;
-      return 0;
-    });
-    setGlazes(sorted);
-  };
-
-  // Hakee lasitteen reseptin Supabasesta ja avaa ikkunan
   const openRecipe = async (glaze: Glazes) => {
     setSelectedGlaze(glaze);
     setRecipeModalVisible(true);
-    setRecipeDetails([]); // Tyhjennetään vanha latauksen ajaksi
+    setRecipeDetails([]);
 
-    // 1. Hae reseptirivit
-    const { data: rows } = await supabase
-      .from('recipe_rows')
-      .select('*')
-      .eq('glaze_id', glaze.id);
+    const { data: rows } = await supabase.from('recipe_rows').select('*').eq('glaze_id', glaze.id);
 
     if (rows && rows.length > 0) {
-      // 2. Hae raaka-aineiden nimet
       const { data: mats } = await supabase.from('ingredients').select('id, name');
       const matMap: Record<number, string> = {};
       mats?.forEach(m => matMap[m.id] = m.name);
 
-      // 3. Yhdistä tiedot
       const enriched = rows.map(row => ({
         ...row,
         materialName: matMap[row.raw_material_id] || "Tuntematon raaka-aine"
@@ -156,98 +121,68 @@ export default function GlazesScreen() {
   };
 
   const renderItem = ({ item }: { item: Glazes }) => {
-    const isSelected = selectedId.includes(item.id);
-
     const renderRightActions = () => (
-      <TouchableOpacity
-        style={styles.deleteSwipe}
-        onPress={() => handleSwipeDelete(item.id)}
-      >
-        <Text style={{ color: "white" }}>{i18n.t("delete")}</Text>
-      </TouchableOpacity>
+      <View style={styles.deleteSwipe}>
+        <IconButton icon="trash-can" iconColor="#fff" onPress={() => handleSwipeDelete(item.id)} />
+      </View>
     );
 
     return (
       <Swipeable renderRightActions={renderRightActions}>
-        <TouchableOpacity
-          style={[styles.row, isSelected && styles.selectedRow]}
-          onPress={() => openRecipe(item)} // KLIKKAUS AVAA RESEPTIN
-          onLongPress={() => handleLongPress(item.id)}
-          delayLongPress={500}
-        >
-          <TouchableOpacity
-            style={styles.checkbox}
-            onPress={() => toggleSelection(item.id)}
-          >
-            <Text>{isSelected ? "[X]" : "[ ]"}</Text>
-          </TouchableOpacity>
-
-          <View>
-            <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
-            <Text>{item.date} | Lämpötila: {item.temperature}°C</Text>    
-          </View>
-        </TouchableOpacity>
+        <Card style={styles.glazeCard} onPress={() => openRecipe(item)}>
+          <Card.Title 
+            title={item.name} 
+            titleStyle={{ fontWeight: 'bold' }}
+            right={(props) => <IconButton {...props} icon="chevron-right" />}
+          />
+        </Card>
       </Swipeable>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ThemedView type="backgroundElement" style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={i18n.t("glazeNamePlaceholder")}
-          value={newGlaze}
-          onChangeText={setNewGlaze}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={i18n.t("glazeDatePlaceholder")}
-          value={newDate}
-          onChangeText={setNewDate}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={i18n.t("glazeTempPlaceholder")}
-          value={newTemperature}
-          onChangeText={setNewTemperature}
-          keyboardType="numeric"
-        />
-        <Button title={i18n.t("saveGlaze")} onPress={handleAddGlaze} />
-      </ThemedView>
 
-      <ThemedView style={styles.buttonRow}>
-        <Button title={i18n.t("glaze")} onPress={() => sortData("name")} />
-        <Button title={i18n.t("glazeDate")} onPress={() => sortData('date')} />
-        <Button
-          title={i18n.t("glazeTemp")}
-          onPress={() => sortData("temperature")}
+      <View style={styles.headerRow}>
+        <Text variant="headlineMedium" style={styles.headerTitle}>Omat Lasitteet</Text>
+        <IconButton 
+          icon="account-circle" 
+          size={32} 
+          iconColor={user ? "#2a7" : "#888"} 
+          onPress={() => setAuthModalVisible(true)} 
         />
-      </ThemedView>
+      </View>
 
-      {selectedId.length > 0 && (
-        <Button
-          title={`${i18n.t("removeSelected")} (${selectedId.length})`}
-          color="red"
-          onPress={handleDeleteSelected}
-        />
-      )}
+      {/* PIKALISÄYS */}
+      <Card style={styles.addCard}>
+        <Card.Content style={styles.addRow}>
+          <PaperTextInput
+            mode="outlined"
+            style={styles.addInput}
+            placeholder={i18n.t("glazeNamePlaceholder")}
+            value={newGlaze}
+            onChangeText={setNewGlaze}
+            dense
+          />
+          <PaperButton mode="contained" onPress={handleAddGlaze} buttonColor="#2a7" style={styles.addButton}>
+            Lisää
+          </PaperButton>
+        </Card.Content>
+      </Card>
 
+      {/* LASITELISTA */}
       <FlatList
         data={glazes}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      {/* MODAL: RESEPTIN KATSELU */}
       <Modal visible={recipeModalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.recipeModalContainer}>
-            <Text style={styles.modalTitle}>{selectedGlaze?.name}</Text>
-            <Text style={{ marginBottom: 15, fontStyle: 'italic' }}>
-              {selectedGlaze?.date} | {selectedGlaze?.temperature}°C
-            </Text>
-
+            <Text variant="headlineSmall" style={styles.modalTitle}>{selectedGlaze?.name}</Text>
+            
             {recipeDetails.length > 0 ? (
               recipeDetails.map((r, i) => (
                 <View key={i} style={styles.recipeRow}>
@@ -256,12 +191,44 @@ export default function GlazesScreen() {
                 </View>
               ))
             ) : (
-              <Text style={{ marginBottom: 15 }}>Tälle lasitteelle ei ole tallennettu reseptiä.</Text>
+              <Text style={{ marginBottom: 15, fontStyle: 'italic', color: '#666' }}>Tälle lasitteelle ei ole tallennettu reseptiä.</Text>
             )}
             
-            <View style={{ marginTop: 20 }}>
-              <Button title="Sulje" onPress={() => setRecipeModalVisible(false)} />
-            </View>
+            <PaperButton mode="contained" style={{ marginTop: 20 }} onPress={() => setRecipeModalVisible(false)} buttonColor="#333">
+              Sulje
+            </PaperButton>
+          </View>
+        </View>
+      </Modal>
+
+      {/* MODAL: Signup / Login */}
+      <Modal visible={authModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.recipeModalContainer}>
+            {user ? (
+              <View style={{ alignItems: 'center' }}>
+                <Avatar.Icon size={64} icon="account" style={{ backgroundColor: '#2a7', marginBottom: 15 }} />
+                <Text variant="titleMedium" style={{ marginBottom: 5 }}>Olet kirjautunut sisään</Text>
+                <Text variant="bodyMedium" style={{ marginBottom: 20, color: '#666' }}>{user.email}</Text>
+                <PaperButton mode="outlined" onPress={handleLogout} style={{ width: '100%', marginBottom: 10 }}>Kirjaudu ulos</PaperButton>
+                <PaperButton mode="text" onPress={() => setAuthModalVisible(false)}>Sulje</PaperButton>
+              </View>
+            ) : (
+              <View>
+                <Text variant="headlineSmall" style={{ marginBottom: 15, color: 'black' }}>Pilvitallennus</Text>
+                <Text variant="bodyMedium" style={{ marginBottom: 20, color: '#666' }}>
+                  Kirjaudu sisään tai luo tili pitääksesi lasitteesi tallessa ja synkronoituna laitteiden välillä.
+                </Text>
+                <PaperTextInput mode="outlined" placeholder="Sähköposti" textColor="black" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" style={ styles.epInputs } />
+                <PaperTextInput mode="outlined" placeholder="Salasana" textColor="black" value={password} onChangeText={setPassword} secureTextEntry style={ styles.epInputs} />
+                
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
+                  <PaperButton mode="outlined" onPress={() => handleAuth(true)} style={{ flex: 1, marginRight: 5 }}>Luo tili</PaperButton>
+                  <PaperButton mode="contained" onPress={() => handleAuth(false)} buttonColor="#2a7" style={{ flex: 1, marginLeft: 5 }}>Kirjaudu</PaperButton>
+                </View>
+                <PaperButton mode="text" onPress={() => setAuthModalVisible(false)} textColor="#888">Peruuta</PaperButton>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -270,72 +237,81 @@ export default function GlazesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { 
+    flex: 1, 
+    paddingHorizontal: 15, 
+    backgroundColor: "#f5f5f5" 
   },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    height: 50,
+  headerRow: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    marginTop: 10, 
+    marginBottom: 15 
   },
-  row: {
-    flexDirection: "row",
-    padding: 15,
-    borderBottomWidth: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+  headerTitle: { 
+    fontWeight: 'bold', 
+    color: '#333' 
   },
-  selectedRow: {
-    backgroundColor: "#e0f7fa",
+  addCard: {
+    marginBottom: 20, 
+    backgroundColor: "#fff" 
   },
-  checkbox: {
-    marginRight: 15,
-    padding: 5,
+  addRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center' 
   },
-  deleteSwipe: {
-    backgroundColor: "red",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    padding: 20,
+  epInputs:{
+        padding: 2,
+        borderRadius: 5,
+        fontSize: 15,
+        backgroundColor: "rgba(251, 255, 251, 0.66)",
+        marginRight: 8,
+        marginBottom: 10,
   },
-  formContainer: {
-    backgroundColor: "#f9f9f9",
-    padding: 15,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    borderWidth: 1,
-    marginBottom: 15,
+  addInput: { 
+    flex: 1, 
+    marginRight: 10, 
+    backgroundColor: '#fff' 
   },
-  input: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+  addButton: { 
+    justifyContent: 'center' 
   },
-  // Uudet tyylit modaalia varten
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    padding: 20,
+  glazeCard: { 
+    marginBottom: 10, 
+    backgroundColor: '#fff' 
   },
-  recipeModalContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    elevation: 5,
+  deleteSwipe: { 
+    backgroundColor: "red", 
+    justifyContent: "center", 
+    alignItems: "flex-end", 
+    marginBottom: 10, 
+    borderRadius: 8, 
+    paddingRight: 10 
   },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  modalOverlay: { 
+    flex: 1, 
+    backgroundColor: 'rgba(0,0,0,0.5)', 
+    justifyContent: 'center', 
+    padding: 20 
   },
-  recipeRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-    paddingVertical: 10,
-  }
+  recipeModalContainer: { 
+    backgroundColor: '#fff', 
+    padding: 25, 
+    borderRadius: 12, 
+    elevation: 5 
+  },
+  modalTitle: { 
+    fontWeight: 'bold', 
+    marginBottom: 15, 
+    color: 'black'
+  },
+  recipeRow: { 
+    flexDirection: 'row', 
+    borderBottomWidth: 1, 
+    color: 'black', 
+    borderColor: '#eee', 
+    paddingVertical: 12 
+  },
+
 });

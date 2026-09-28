@@ -137,41 +137,6 @@ export default function CalculationScreen() {
 }  
 
 
-    {/* <View style={styles.bugReportSection}>
-    {!naytaLomake ? (
-      // Tila A: Näytetään vain avausnappi
-      <PaperButton mode="outlined" onPress={() => setNaytaLomake(true)}>
-        Huomasitko bugin?
-      </PaperButton>
-    ) : (
-      // Tila B: Näytetään tekstikenttä ja napit
-      <View>
-        <Text style={styles.bugTitle}>Mitä tapahtui ja miten sen voi toistaa?</Text>
-        <TextInput
-
-          placeholder="Kirjoita tähän..."
-          multiline={true}
-          numberOfLines={4}
-          value={palaute}
-          onChangeText={setPalaute}
-          style={styles.input}
-        />
-        
-        <View style={styles.buttonRow}>
-          <PaperButton onPress={peruuta}>Peruuta</PaperButton>
-          <PaperButton 
-            mode="contained" 
-            onPress={handleBugReport} 
-            disabled={palaute.trim().length === 0}
-          >
-            Lähetä
-          </PaperButton>
-        </View>
-    </View>
-  )} */}
-
-
-
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 

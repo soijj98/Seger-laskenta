@@ -68,6 +68,39 @@ export const getDeviceId = async () => {
   return deviceId;
 };
 
+export const mergeGuestDataToUser = async (userId: string) => {
+  const deviceId = await getDeviceId(); 
+
+  
+  const { error } = await supabase
+    .from('glazes')
+    .update({ user_id: userId })
+    .eq('device_id', deviceId)
+    .is('user_id', null); // this confirm we dont override existing data
+
+  if (error) {
+    console.error("Virhe siirrettäessä lasitteita:", error);
+  }
+};
+
+const handleSignUp = async (email: string, pass: string) => {
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: pass,
+  });
+
+  if (error) {
+    alert("Virhe: " + error.message);
+    return;
+  }
+
+  if (data.user) {
+    // Siirretään laitteen lasitteet talteen pilveen uudelle tilille
+    await mergeGuestDataToUser(data.user.id);
+    alert("Tili luotu! Lasitteesi on nyt turvassa pilvessä.");
+  }
+};
+
 export const seedIngredients = async () => {
   
   // checking if there is rows
