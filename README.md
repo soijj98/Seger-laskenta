@@ -43,7 +43,9 @@ The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares)
 * Recipe → Seger formula in real-time
 * Seger → Recipe via matrix calculation
 * A library of 79 raw materials directly in the database
- 
+
+### 🌐 Localization
+This application is primarily developed in Finnish. An English translation is currently underway, but it is not yet complete. You might encounter missing translations or Finnish strings in the current version.
 ---
 
 ## Architecture
