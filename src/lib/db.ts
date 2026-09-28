@@ -75,28 +75,28 @@ export const seedIngredients = async () => {
 
       const dataToInsert = ingredientsSeed.map((item: any) => ({
           // Parsitaan id numeroksi (esim. "2" -> 2), jotta se mätsää Excelin riveihin
-          $id: parseInt(item.id, 10),
-          $name: item.nimi,
-          $price: item.hinta_kg || 0,
-          $g_mol: item.g_mol || 0,
-          // Mapattaan isot ja pienet kirjaimet oikein (JSON avain -> SQL muuttuja)
-          $li2o: item.Li2O || 0,
-          $na2o: item.Na2O || 0,
-          $k2o: item.K2O || 0,
-          $cao: item.CaO || 0,
-          $mgo: item.MgO || 0,
-          $bao: item.BaO || 0,
-          $sro: item.SrO || 0,
-          $zno: item.ZnO || 0,
-          $pbo: item.PbO || 0,
-          $al2o3: item.Al2O3 || 0,
-          $fe2o3: item.Fe2O3 || 0,
-          $b2o3: item.B2O3 || 0,
-          $sio2: item.SiO2 || 0,
-          $p2o5: item.P2O5 || 0,
-          $tio2: item.TiO2 || 0,
-          $mno2: item.MnO2 || 0,
+          id: parseInt(item.id, 10),
+          name: item.nimi,
+          price: item.hinta_kg || 0,
+          g_mol: item.g_mol || 0,
+          li2o: item.Li2O || 0,
+          na2o: item.Na2O || 0,
+          k2o: item.K2O || 0,
+          cao: item.CaO || 0,
+          mgo: item.MgO || 0,
+          bao: item.BaO || 0,
+          sro: item.SrO || 0,
+          zno: item.ZnO || 0,
+          pbo: item.PbO || 0,
+          al2o3: item.Al2O3 || 0, 
+          fe2o3: item.Fe2O3 || 0,
+          b2o3: item.B2O3 || 0,
+          sio2: item.SiO2 || 0,
+          p2o5: item.P2O5 || 0,
+          tio2: item.TiO2 || 0,
+          mno2: item.MnO2 || 0,
         }));
+
 
         const { error: insertError } = await supabase
           .from('ingredients')
