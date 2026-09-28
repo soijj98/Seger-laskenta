@@ -21,10 +21,12 @@ The reverse calculation uses pseudoinverse and NNLS (Non-Negative Least Squares)
 ## Technologies
 
 * **Framework:** React Native + Expo (Expo Router)
-* **Database:** expo-sqlite (local)
+* **Database & Backend:** Supabase (PostgreSQL) with Row Level Security (RLS)
+* **Authentication:** Supabase Auth
+* **Local Storage:** AsyncStorage (for guest mode / lazy registration)
+* **UI Component Library:** React Native Paper
 * **Matrix Calculation:** ml-matrix (pseudoinverse, NNLS)
 * **Language:** TypeScript
-* **Future Backend:** Supabase (PostgreSQL)
 
 ---
 
