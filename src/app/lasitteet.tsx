@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   Button,
+  Modal,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { FlatList, Swipeable } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,6 +21,7 @@ import {
   getGlazes,
 } from "../lib/db";
 import i18n from "../lib/i18n/i18n";
+import { supabase } from "../lib/supabase";
 
 interface Glazes {
   id: number;
@@ -36,6 +38,24 @@ export default function GlazesScreen() {
   const [newGlaze, setNewGlaze] = useState("");
   const [newDate, setNewDate] = useState("");
   const [newTemperature, setNewTemperature] = useState("");
+
+  // Uudet tilat reseptin katseluikkunaa varten
+  const [recipeModalVisible, setRecipeModalVisible] = useState(false);
+  const [selectedGlaze, setSelectedGlaze] = useState<Glazes | null>(null);
+  const [recipeDetails, setRecipeDetails] = useState<any[]>([]);
+
+  const loadData = async () => {
+    try {
+      const data = (await getGlazes()) as Glazes[];
+      setGlazes(data);
+    } catch (error) {
+      console.error(i18n.t("dbErr"), error);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleAddGlaze = async () => {
     if (!newGlaze) {
@@ -54,25 +74,10 @@ export default function GlazesScreen() {
     loadData();
   };
 
-  const loadData = async () => {
-    try {
-      const data = (await getGlazes()) as Glazes[];
-      setGlazes(data);
-    } catch (error) {
-      console.error(i18n.t("dbErr"), error);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const handleSwipeDelete = async (id: number) => {
     await deleteGlazes(id);
     loadData();
   };
-
-  // archive
 
   const handleLongPress = (id: number) => {
     Alert.alert(
@@ -123,6 +128,33 @@ export default function GlazesScreen() {
     setGlazes(sorted);
   };
 
+  // Hakee lasitteen reseptin Supabasesta ja avaa ikkunan
+  const openRecipe = async (glaze: Glazes) => {
+    setSelectedGlaze(glaze);
+    setRecipeModalVisible(true);
+    setRecipeDetails([]); // Tyhjennetään vanha latauksen ajaksi
+
+    // 1. Hae reseptirivit
+    const { data: rows } = await supabase
+      .from('recipe_rows')
+      .select('*')
+      .eq('glaze_id', glaze.id);
+
+    if (rows && rows.length > 0) {
+      // 2. Hae raaka-aineiden nimet
+      const { data: mats } = await supabase.from('ingredients').select('id, name');
+      const matMap: Record<number, string> = {};
+      mats?.forEach(m => matMap[m.id] = m.name);
+
+      // 3. Yhdistä tiedot
+      const enriched = rows.map(row => ({
+        ...row,
+        materialName: matMap[row.raw_material_id] || "Tuntematon raaka-aine"
+      }));
+      setRecipeDetails(enriched);
+    }
+  };
+
   const renderItem = ({ item }: { item: Glazes }) => {
     const isSelected = selectedId.includes(item.id);
 
@@ -139,6 +171,7 @@ export default function GlazesScreen() {
       <Swipeable renderRightActions={renderRightActions}>
         <TouchableOpacity
           style={[styles.row, isSelected && styles.selectedRow]}
+          onPress={() => openRecipe(item)} // KLIKKAUS AVAA RESEPTIN
           onLongPress={() => handleLongPress(item.id)}
           delayLongPress={500}
         >
@@ -150,9 +183,8 @@ export default function GlazesScreen() {
           </TouchableOpacity>
 
           <View>
-            <Text> {item.name}</Text>
-            <Text> {item.date} | Lämpötila: {item.temperature}</Text>    
-            {/*<Text> {item.archived}</Text>*/}
+            <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+            <Text>{item.date} | Lämpötila: {item.temperature}°C</Text>    
           </View>
         </TouchableOpacity>
       </Swipeable>
@@ -206,6 +238,33 @@ export default function GlazesScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
       />
+
+      {/* MODAL: RESEPTIN KATSELU */}
+      <Modal visible={recipeModalVisible} animationType="fade" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.recipeModalContainer}>
+            <Text style={styles.modalTitle}>{selectedGlaze?.name}</Text>
+            <Text style={{ marginBottom: 15, fontStyle: 'italic' }}>
+              {selectedGlaze?.date} | {selectedGlaze?.temperature}°C
+            </Text>
+
+            {recipeDetails.length > 0 ? (
+              recipeDetails.map((r, i) => (
+                <View key={i} style={styles.recipeRow}>
+                  <Text style={{ flex: 1, fontSize: 16 }}>{r.materialName}</Text>
+                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{r.amount_perc} %</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={{ marginBottom: 15 }}>Tälle lasitteelle ei ole tallennettu reseptiä.</Text>
+            )}
+            
+            <View style={{ marginTop: 20 }}>
+              <Button title="Sulje" onPress={() => setRecipeModalVisible(false)} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -214,14 +273,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 10,
     height: 50,
   },
-
   row: {
     flexDirection: "row",
     padding: 15,
@@ -229,23 +286,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
   },
-
   selectedRow: {
     backgroundColor: "#e0f7fa",
   },
-
   checkbox: {
     marginRight: 15,
     padding: 5,
   },
-
   deleteSwipe: {
     backgroundColor: "red",
     justifyContent: "center",
     alignItems: "flex-end",
     padding: 20,
   },
-
   formContainer: {
     backgroundColor: "#f9f9f9",
     padding: 15,
@@ -254,7 +307,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 15,
   },
-
   input: {
     backgroundColor: "#fff",
     borderColor: "#ccc",
@@ -263,4 +315,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
+  // Uudet tyylit modaalia varten
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  recipeModalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  recipeRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    paddingVertical: 10,
+  }
 });
