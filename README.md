@@ -71,8 +71,8 @@ The database is initialized and raw materials are seeded automatically on the fi
 
 ## Kehityssuunnitelma
 
-- [ ] Supabase backend (cloud sync)
-- [ ] Save and edit recipes
+- [ X ] Supabase backend (cloud sync)
+- [ X ] Save and edit recipes
 - [ ] Color oxide management
 - [ ] Share glazes between users
 - [ ] Document firing schedules
