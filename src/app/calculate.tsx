@@ -327,7 +327,7 @@ export default function CalculationScreen() {
             {!naytaLomake ? (
               // Tila A: Näytetään vain avausnappi
               <PaperButton mode="outlined" onPress={() => setNaytaLomake(true)}>
-                Ilmoita bugista
+                Huomasitko bugin?
               </PaperButton>
             ) : (
               // Tila B: Näytetään tekstikenttä ja napit
@@ -538,6 +538,40 @@ Reverse direction: Seger → Recipe */}
               )}
             </>
           )}
+
+           <View style={styles.bugReportSection}>
+            {!naytaLomake ? (
+              // Tila A: Näytetään vain avausnappi
+              <PaperButton mode="outlined" onPress={() => setNaytaLomake(true)}>
+                Huomasitko bugin?
+              </PaperButton>
+            ) : (
+              // Tila B: Näytetään tekstikenttä ja napit
+              <View>
+                <Text style={styles.bugTitle}>Mitä tapahtui ja miten sen voi toistaa?</Text>
+                <TextInput
+
+                  placeholder="Kirjoita tähän..."
+                  multiline={true}
+                  numberOfLines={4}
+                  value={palaute}
+                  onChangeText={setPalaute}
+                  style={styles.input}
+                />
+                
+                <View style={styles.buttonRow}>
+                  <PaperButton onPress={peruuta}>Peruuta</PaperButton>
+                  <PaperButton 
+                    mode="contained" 
+                    onPress={handleBugReport} 
+                    disabled={palaute.trim().length === 0}
+                  >
+                    Lähetä
+                  </PaperButton>
+                </View>
+            </View>
+          )}
+          </View>
         </ScrollView>
       )}
 
@@ -548,6 +582,8 @@ Reverse direction: Seger → Recipe */}
           <PaperTextInput
             mode="outlined"
             placeholder="Hae raaka-aineita..."
+            textColor="black"
+            placeholderTextColor={"#a1a1aa"}
             value={searchQuery}
             onChangeText={setSearchQuery}
             right={<PaperTextInput.Icon icon="magnify" />}
@@ -591,6 +627,8 @@ Reverse direction: Seger → Recipe */}
           <PaperTextInput
             mode="outlined"
             placeholder="Hae raaka-aineita..."
+            textColor="black"
+            placeholderTextColor={"#a1a1aa"}
             value={searchQuery}
             onChangeText={setSearchQuery}
             right={<PaperTextInput.Icon icon="magnify" />}
@@ -643,13 +681,12 @@ const styles = StyleSheet.create({
   bugReportSection: {
     marginTop: 40,
     paddingTop: 20,
-    borderWidth: 1,
-    borderColor: '#333'
+
   },
 
   bugTitle: {
     marginBottom: 10,
-    color: '#e0e0e0',
+    color: '#020101',
   },
 
   buttonRow: {
